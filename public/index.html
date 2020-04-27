@@ -7,9 +7,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <style type="text/css">
-      #login, #loggedin {
-        display: none;
-      }
       .text-overflow {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -26,112 +23,90 @@
 
   <body>
     <div class="container">
+      <h1 class="text-center">Spotify Web App</h1>
       <div id="login">
-        <h1>This is an example of the Authorization Code flow</h1>
         <a href="/login" class="btn btn-primary">Log in with Spotify</a>
       </div>
       <div id="loggedin">
-        <div id="user-profile">
-        </div>
-        <div id="oauth">
-        </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+        <h3>Top Data</h3>
+        <button id="databtn">Get Top Data</button>
+        <div id="top-data"></div>
       </div>
     </div>
-
-    <h1>Top Data</h1>
-    <button id="databtn">Get Top Data</button>
-    <div id="top-data"></div>
-
-    <script id="user-profile-template" type="text/x-handlebars-template">
-      <h1>Logged in as {{display_name}}</h1>
-      <div class="media">
-        <div class="pull-left">
-          <!-- <img class="media-object" width="150" src="{{images.0.url}}" /> -->
-        </div>
-        <div class="media-body">
-          <dl class="dl-horizontal">
-            <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
-            <dt>Id</dt><dd>{{id}}</dd>
-            <dt>Email</dt><dd>{{email}}</dd>
-            <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
-            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
-            <dt>Country</dt><dd>{{country}}</dd>
-          </dl>
-        </div>
-      </div>
-    </script>
 
     <script id="top-data-template" type="text/x-handlebars-template">
       <div class="container-fluid">
         <div class="text-center">
           <div class="row">
             <div class="col-lg">
-              <h4>1. {{items.0.name}}</h4>
-              <img src="{{items.0.images.1.url}}">
+              <h4>1. {{0.name}}</h4>
+              <img src="{{0.image}}">
+              <p>{{0.track.name}}</p>
             </div>
             <div class="col-lg">
-              <h4>2. {{items.1.name}}</h4>
-              <img src="{{items.1.images.1.url}}">
+              <h4>2. {{1.name}}</h4>
+              <img src="{{1.image}}">
+              <p>{{1.track.name}}</p>
             </div>
             <div class="col-lg">
-              <h4>3. {{items.2.name}}</h4>
-              <img src="{{items.2.images.1.url}}">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-lg">
-              <h4>4. {{items.3.name}}</h4>
-              <img src="{{items.3.images.1.url}}">
-            </div>
-            <div class="col-lg">
-              <h4>5. {{items.4.name}}</h4>
-              <img src="{{items.4.images.1.url}}">
-            </div>
-            <div class="col-lg">
-              <h4>6. {{items.5.name}}</h4>
-              <img src="{{items.5.images.1.url}}">
+              <h4>3. {{2.name}}</h4>
+              <img src="{{2.image}}">
+              <p>{{2.track.name}}</p>
             </div>
           </div>
           <div class="row">
             <div class="col-lg">
-              <h4>7. {{items.6.name}}</h4>
-              <img src="{{items.6.images.1.url}}">
+              <h4>4. {{3.name}}</h4>
+              <img src="{{3.image}}">
+              <p>{{3.track.name}}</p>
             </div>
             <div class="col-lg">
-              <h4>8. {{items.7.name}}</h4>
-              <img src="{{items.7.images.1.url}}">
+              <h4>5. {{4.name}}</h4>
+              <img src="{{4.image}}">
+              <p>{{4.track.name}}</p>
             </div>
             <div class="col-lg">
-              <h4>9. {{items.8.name}}</h4>
-              <img src="{{items.8.images.1.url}}">
+              <h4>6. {{5.name}}</h4>
+              <img src="{{5.image}}">
+              <p>{{5.track.name}}</p>
             </div>
           </div>
           <div class="row">
             <div class="col-lg">
-              <h4>10. {{items.9.name}}</h4>
-              <img src="{{items.9.images.1.url}}">
+              <h4>7. {{6.name}}</h4>
+              <img src="{{6.image}}">
+              <p>{{6.track.name}}</p>
             </div>
             <div class="col-lg">
-              <h4>11. {{items.10.name}}</h4>
-              <img src="{{items.10.images.1.url}}">
+              <h4>8. {{7.name}}</h4>
+              <img src="{{7.image}}">
+              <p>{{7.track.name}}</p>
             </div>
             <div class="col-lg">
-              <h4>12. {{items.11.name}}</h4>
-              <img src="{{items.11.images.1.url}}">
+              <h4>9. {{8.name}}</h4>
+              <img src="{{8.image}}">
+              <p>{{8.track.name}}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg">
+              <h4>10. {{9.name}}</h4>
+              <img src="{{9.image}}">
+              <p>{{9.track.name}}</p>
+            </div>
+            <div class="col-lg">
+              <h4>11. {{10.name}}</h4>
+              <img src="{{10.image}}">
+              <p>{{10.track.name}}</p>
+            </div>
+            <div class="col-lg">
+              <h4>12. {{11.name}}</h4>
+              <img src="{{11.image}}">
+              <p>{{11.track.name}}</p>
             </div>
           </div>
         </div>
       </div>
-    </script>
-
-    <script id="oauth-template" type="text/x-handlebars-template">
-      <h2>oAuth info</h2>
-      <dl class="dl-horizontal">
-        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
-        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
-      </dl>
     </script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
@@ -153,17 +128,9 @@
           return hashParams;
         }
 
-        var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-            userProfileTemplate = Handlebars.compile(userProfileSource),
-            userProfilePlaceholder = document.getElementById('user-profile');
-
-        var oauthSource = document.getElementById('oauth-template').innerHTML,
-            oauthTemplate = Handlebars.compile(oauthSource),
-            oauthPlaceholder = document.getElementById('oauth');
-
-        var topDataSource = document.getElementById('top-data-template').innerHTML,
-            topDataTemplate = Handlebars.compile(topDataSource),
-            topDataPlaceholder = document.getElementById('top-data');
+        function getRandomInt(max) {
+          return Math.floor(Math.random() * Math.floor(max));
+        }
 
         var params = getHashParams();
 
@@ -171,39 +138,66 @@
             refresh_token = params.refresh_token,
             error = params.error;
 
+        function selectTrack(artistID, callback) {
+          $.ajax({
+            url: 'https://api.spotify.com/v1/artists/' + artistID + '/top-tracks?country=US',
+            headers: {
+              'Authorization': 'Bearer ' + access_token
+            },
+            success: function(response) {
+              callback(response);
+            }
+          });
+        }
+
+        function organizeArtistData(response) {
+          var artists = [];
+
+          for (var i = 0; i < 12; i++) {
+            (function(i) {
+              artistID = response.items[i].id;
+              trackData = selectTrack(artistID, function(response2) {
+                var j = getRandomInt(10);
+                trackData = {
+                  name: response2.tracks[j].name,
+                  id: response2.tracks[j].id
+                };
+                artist = {
+                  name: response.items[i].name,
+                  image: response.items[i].images[1].url,
+                  track: trackData
+                }
+                artists.push(artist);
+              });
+            })(i)
+          }
+
+          $(document).ajaxStop(function () {
+            console.log(artists);
+            topDataPlaceholder.innerHTML = topDataTemplate(artists);
+          });
+        }
+
+        var topDataSource = document.getElementById('top-data-template').innerHTML,
+            topDataTemplate = Handlebars.compile(topDataSource),
+            topDataPlaceholder = document.getElementById('top-data');
+
         if (error) {
           alert('There was an error during the authentication');
         } else {
           if (access_token) {
-            // render oauth info
-            oauthPlaceholder.innerHTML = oauthTemplate({
-              access_token: access_token,
-              refresh_token: refresh_token
-            });
-          
-            $.ajax({
-                url: 'https://api.spotify.com/v1/me',
+            $('#login').hide();
+            $('#loggedin').show();
+            document.getElementById('databtn').addEventListener('click', function() {
+              $.ajax({
+                url: 'https://api.spotify.com/v1/me/top/artists?limit=12',
                 headers: {
                   'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
-                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
-                  $('#login').hide();
-                  $('#loggedin').show();
+                  console.log(response);
+                  organizeArtistData(response);
                 }
-            });
-
-            document.getElementById('databtn').addEventListener('click', function() {
-              $.ajax({
-                  url: 'https://api.spotify.com/v1/me/top/artists',
-                  headers: {
-                    'Authorization': 'Bearer ' + access_token
-                  },
-                  success: function(response) {
-                    console.log(response)
-                    topDataPlaceholder.innerHTML = topDataTemplate(response);
-                  }
               });
             })
           } else {
@@ -211,21 +205,6 @@
               $('#login').show();
               $('#loggedin').hide();
           }
-
-          document.getElementById('obtain-new-token').addEventListener('click', function() {
-            $.ajax({
-              url: '/refresh_token',
-              data: {
-                'refresh_token': refresh_token
-              }
-            }).done(function(data) {
-              access_token = data.access_token;
-              oauthPlaceholder.innerHTML = oauthTemplate({
-                access_token: access_token,
-                refresh_token: refresh_token
-              });
-            });
-          }, false);
         }
       })();
     </script>
