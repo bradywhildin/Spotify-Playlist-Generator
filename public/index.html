@@ -19,6 +19,12 @@
         width: 320px;
       }
     </style>
+
+    <script>
+          function playTrack(trackID) {
+            alert("playing " + trackID);
+          }
+    </script>
   </head>
 
   <body>
@@ -41,68 +47,68 @@
             <div class="col-lg">
               <h4>1. {{0.name}}</h4>
               <img src="{{0.image}}">
-              <p>{{0.track.name}}</p>
+            <p><button onclick='playTrack("{{0.track.id}}")'>Play</button>{{0.track.name}}</p>
             </div>
             <div class="col-lg">
               <h4>2. {{1.name}}</h4>
               <img src="{{1.image}}">
-              <p>{{1.track.name}}</p>
+              <p><button onclick='playTrack("{{1.track.id}}")'>Play</button>{{1.track.name}}</p>
             </div>
             <div class="col-lg">
               <h4>3. {{2.name}}</h4>
               <img src="{{2.image}}">
-              <p>{{2.track.name}}</p>
+              <p><button onclick='playTrack("{{2.track.id}}")'>Play</button>{{2.track.name}}</p>
             </div>
           </div>
           <div class="row">
             <div class="col-lg">
               <h4>4. {{3.name}}</h4>
               <img src="{{3.image}}">
-              <p>{{3.track.name}}</p>
+              <p><button onclick='playTrack("{{3.track.id}}")'>Play</button>{{3.track.name}}</p>
             </div>
             <div class="col-lg">
               <h4>5. {{4.name}}</h4>
               <img src="{{4.image}}">
-              <p>{{4.track.name}}</p>
+              <p><button onclick='playTrack("{{4.track.id}}")'>Play</button>{{4.track.name}}</p>
             </div>
             <div class="col-lg">
               <h4>6. {{5.name}}</h4>
               <img src="{{5.image}}">
-              <p>{{5.track.name}}</p>
-            </div>
+              <p><button onclick='playTrack("{{5.track.id}}")'>Play</button>{{5.track.name}}</p>
+            </div>5
           </div>
           <div class="row">
             <div class="col-lg">
               <h4>7. {{6.name}}</h4>
               <img src="{{6.image}}">
-              <p>{{6.track.name}}</p>
+              <p><button onclick='playTrack("{{6.track.id}}")'>Play</button>{{6.track.name}}</p>
             </div>
             <div class="col-lg">
               <h4>8. {{7.name}}</h4>
               <img src="{{7.image}}">
-              <p>{{7.track.name}}</p>
+              <p><button onclick='playTrack("{{7.track.id}}")'>Play</button>{{7.track.name}}</p>
             </div>
             <div class="col-lg">
               <h4>9. {{8.name}}</h4>
               <img src="{{8.image}}">
-              <p>{{8.track.name}}</p>
+              <p><button onclick='playTrack("{{8.track.id}}")'>Play</button>{{8.track.name}}</p>
             </div>
           </div>
           <div class="row">
             <div class="col-lg">
               <h4>10. {{9.name}}</h4>
               <img src="{{9.image}}">
-              <p>{{9.track.name}}</p>
+              <p><button onclick='playTrack("{{9.track.id}}")'>Play</button>{{9.track.name}}</p>
             </div>
             <div class="col-lg">
               <h4>11. {{10.name}}</h4>
               <img src="{{10.image}}">
-              <p>{{10.track.name}}</p>
+              <p><button onclick='playTrack("{{10.track.id}}")'>Play</button>{{10.track.name}}</p>
             </div>
             <div class="col-lg">
               <h4>12. {{11.name}}</h4>
               <img src="{{11.image}}">
-              <p>{{11.track.name}}</p>
+              <p><button onclick='playTrack("{{11.track.id}}")'>Play</button>{{11.track.name}}</p>
             </div>
           </div>
         </div>
@@ -152,8 +158,11 @@
 
         function organizeArtistData(response) {
           var artists = [];
+          for (i = 0; i < 12; i++) {
+            artists.push({})
+          }
 
-          for (var i = 0; i < 12; i++) {
+          for (i = 0; i < 12; i++) {
             (function(i) {
               artistID = response.items[i].id;
               trackData = selectTrack(artistID, function(response2) {
@@ -167,7 +176,7 @@
                   image: response.items[i].images[1].url,
                   track: trackData
                 }
-                artists.push(artist);
+                artists[i] = artist;
               });
             })(i)
           }
