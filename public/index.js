@@ -123,7 +123,7 @@ var browserPlayerID;
         });
     }
 
-    var topDataSource = document.getElementById('top-data-template').innerHTML,
+    var topDataSource = document.getElementById('artists-template').innerHTML,
         topDataTemplate = Handlebars.compile(topDataSource),
         topDataPlaceholder = document.getElementById('top-data');
 
@@ -131,18 +131,18 @@ var browserPlayerID;
         alert('There was an error during the authentication');
     } else {
         if (access_token) {
-        $('#login').hide();
-        $('#loggedin').show();
+            $('#login').hide();
+            $('#loggedin').show();
 
-        document.getElementById('databtn').addEventListener('click', function() {
-            $.ajax({
-            url: 'https://api.spotify.com/v1/me/top/artists?limit=12',
-            headers: {
-                'Authorization': 'Bearer ' + access_token
-            },
-            success: function(response) {
-                organizeArtistData(response);
-            }
+            document.getElementById('databtn').addEventListener('click', function() {
+                $.ajax({
+                    url: 'https://api.spotify.com/v1/me/top/artists?limit=12',
+                    headers: {
+                        'Authorization': 'Bearer ' + access_token
+                    },
+                    success: function(response) {
+                        organizeArtistData(response);
+                }
             });
         })
         
