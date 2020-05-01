@@ -8,47 +8,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
-    <style type="text/css">
-      @media (max-width: 576px) {
-        p {
-          font-size: 5vw;
-        }
-
-        p button {
-          font-size: 10vw;
-        }
-      }
-
-      @media (min-width: 577px) and (max-width: 991px) {
-        p {
-          font-size: 3.5vw;
-        }
-      }
-
-      @media (min-width: 992px) {
-        p {
-          font-size: 1.5vw;
-        }
-      }
-
-      img {
-        width: 100%;
-      }
-    </style>
-
+    <link rel="stylesheet" type="text/css" href="index.css">
   </head>
   <body>
     <h1 class="text-center">Spotify Web App</h1>
+
     <div id="login">
       <a href="/login" class="btn btn-primary">Log in with Spotify</a>
     </div>
+
     <div id="loggedin">
       <h3>Top Data</h3>
       <button id="databtn">Get Top Data</button>
       <div id="top-data"></div>
     </div>
 
-    <script id="top-data-template" type="text/x-handlebars-template">
+    <script id="artists-template" type="text/x-handlebars-template">
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-3 col-sm-6">
