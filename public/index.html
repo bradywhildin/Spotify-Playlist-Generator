@@ -157,7 +157,7 @@
           const player = new Spotify.Player({
             name: 'Web Playback SDK Quick Start Player',
             getOAuthToken: cb => { cb(token); },
-            volume: .1
+            volume: 0.1
         });
       
     
@@ -231,10 +231,9 @@
             (function(i) {
               artistID = response.items[i].id;
               trackData = selectTrack(artistID, function(response2) {
-                var j = getRandomInt(10);
                 trackData = {
-                  name: response2.tracks[j].name,
-                  id: response2.tracks[j].id
+                  name: response2.tracks[0].name,
+                  id: response2.tracks[0].id
                 };
                 artist = {
                   name: response.items[i].name,
