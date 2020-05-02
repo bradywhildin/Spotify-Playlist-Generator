@@ -115,41 +115,60 @@ var browserPlayerID;
             artists[i] = artist;
             });
         })(i)
-        }
+    }
 
         $(document).ajaxStop(function () {
-        topDataPlaceholder.innerHTML = topDataTemplate(artists);
-        allowToPlayTracks();
+            topDataPlaceholder.innerHTML = topDataTemplate(artists);
+            allowToPlayTracks();
         });
+    }
+
+    function hideAllSections() {
+        $('#topArtists').hide();
+        $('#topTracks').hide();
+        $('.nav-item').removeClass('active');
     }
 
     var topDataSource = document.getElementById('artists-template').innerHTML,
         topDataTemplate = Handlebars.compile(topDataSource),
-        topDataPlaceholder = document.getElementById('top-data');
+        topDataPlaceholder = document.getElementById('artists');
 
     if (error) {
         alert('There was an error during the authentication');
     } else {
         if (access_token) {
             $('#login').hide();
-            $('#loggedin').show();
+            $('#loggedIn').show();
+            
+            $('#topArtists').show()
+            $('#topTracks').hide()
 
-            document.getElementById('databtn').addEventListener('click', function() {
-                $.ajax({
-                    url: 'https://api.spotify.com/v1/me/top/artists?limit=12',
-                    headers: {
-                        'Authorization': 'Bearer ' + access_token
-                    },
-                    success: function(response) {
-                        organizeArtistData(response);
-                }
-            });
+            document.getElementById("artistsBtn").addEventListener('click', function() {
+                hideAllSections();
+                $('#topArtists').show();
+                $('#artistsBtn').addClass('active');
+            })
+
+            document.getElementById("tracksBtn").addEventListener('click', function() {
+                hideAllSections();
+                $('#topTracks').show();
+                $('#tracksBtn').addClass('active');
+            })
+
+            $.ajax({
+                url: 'https://api.spotify.com/v1/me/top/artists?limit=12',
+                headers: {
+                    'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+                    organizeArtistData(response);
+            }
         })
         
         } else {
             // render initial screen
             $('#login').show();
-            $('#loggedin').hide();
+            $('#loggedIn').hide();
         }
     }
 })();

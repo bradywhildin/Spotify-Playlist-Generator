@@ -9,6 +9,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <link rel="stylesheet" type="text/css" href="index.css">
+    <script>
+      function test() {
+        alert("ok");
+      }
+    </script>
   </head>
   <body>
     <h1 class="text-center">Spotify Web App</h1>
@@ -17,10 +22,25 @@
       <a href="/login" class="btn btn-primary">Log in with Spotify</a>
     </div>
 
-    <div id="loggedin">
-      <h3>Top Data</h3>
-      <button id="databtn">Get Top Data</button>
-      <div id="top-data"></div>
+    <div id="loggedIn">
+      <nav class="navbar navbar-expand navbar-light bg-light">
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active" id="artistsBtn">
+              <a class="nav-link" href="#trackSection">Artists</a>
+            </li>
+            <li class="nav-item" id="tracksBtn">
+              <a class="nav-link" href="#trackSection">Songs</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div id="topArtists">
+        <div id="artists"></div>
+      </div>
+      <div id="topTracks">
+        <div id="tracks">Tracks</div>
+      </div>
     </div>
 
     <script id="artists-template" type="text/x-handlebars-template">

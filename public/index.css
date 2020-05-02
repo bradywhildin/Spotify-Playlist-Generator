@@ -1,25 +1,26 @@
 @media (max-width: 576px) {
     p {
-      font-size: 5vw;
+        font-size: 5vw;
     }
 
     p button {
-      font-size: 10vw;
+        font-size: 10vw;
     }
-  }
+}
 
-  @media (min-width: 577px) and (max-width: 991px) {
+@media (min-width: 577px) and (max-width: 991px) {
     p {
-      font-size: 3.5vw;
+        font-size: 3.5vw;
     }
-  }
+}
 
-  @media (min-width: 992px) {
+@media (min-width: 992px) {
     p {
-      font-size: 1.5vw;
+        font-size: 1.5vw;
     }
-  }
+}
 
-  img {
+img {
     width: 100%;
-  }
+}
+
