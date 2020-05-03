@@ -6,11 +6,19 @@
     p button {
         font-size: 10vw;
     }
+
+    select {
+        font-size: 4vw;
+    }
 }
 
 @media (min-width: 577px) and (max-width: 991px) {
     p {
         font-size: 3.5vw;
+    }
+
+    select {
+        font-size: 2.5vw;
     }
 }
 
@@ -18,7 +26,12 @@
     p {
         font-size: 1.5vw;
     }
+
+    select {
+        font-size: 1.2vw;
+    }
 }
+
 
 .row img {
     width: 100%;
@@ -26,4 +39,8 @@
 
 #tracksContainer .row {
     margin: 20px 0;
+}
+
+p select {
+    width: 75%;
 }

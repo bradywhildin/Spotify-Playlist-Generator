@@ -23,6 +23,12 @@
     </div>
 
     <div id="loggedIn">
+      <button id="refreshBtn">Refresh</button>
+      <select id="timeRangeDropdown">
+        <option value="long_term">All-time</option>
+        <option value="medium_term">Past 6 Months</option>
+        <option value="short_term">Past 4 Weeks</option>
+      </select>
       <nav class="navbar navbar-expand navbar-light bg-light">
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
@@ -53,13 +59,27 @@
                 <div class="col-lg-3 col-sm-6">
                   <h4>{{inc @index}}. {{name}}</h4>
                   <img src="{{image}}">
-                  <p><button class="artistPlayBtn" data-track="{{track.id}}">Play</button>{{track.name}}</p>
+                  <p>
+                    <button class="artistPlayBtn">Play</button>
+                    <select>
+                      {{#each tracks}}
+                        <option value="{{id}}">{{name}}</option>
+                      {{/each}}
+                    </select>
+                  </p>
                 </div>
             {{else}}
               <div class="col-lg-3 col-sm-6">
                 <h4>{{inc @index}}. {{name}}</h4>
                 <img src="{{image}}">
-                <p><button class="artistPlayBtn" data-track="{{track.id}}">Play</button>{{track.name}}</p>
+                <p>
+                  <button class="artistPlayBtn" data-track="{{track.id}}">Play</button>
+                  <select>
+                    {{#each tracks}}
+                      <option value="{{id}}">{{name}}</option>
+                    {{/each}}
+                  </select>
+                </p>
               </div>
             {{/if}}
           {{/each}}
