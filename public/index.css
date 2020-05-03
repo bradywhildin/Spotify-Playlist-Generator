@@ -20,7 +20,10 @@
     }
 }
 
-img {
+.row img {
     width: 100%;
 }
 
+#tracksContainer .row {
+    margin: 20px 0;
+}
