@@ -27,10 +27,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item" id="artistsBtn">
-              <a class="nav-link" href="#trackSection">Artists</a>
+              <a class="nav-link" href="#">Artists</a>
             </li>
             <li class="nav-item" id="tracksBtn">
-              <a class="nav-link" href="#trackSection">Songs</a>
+              <a class="nav-link" href="#">Songs</a>
             </li>
           </ul>
         </div>
@@ -78,15 +78,13 @@
               <img src="{{image}}">
             </div>
             <div class="col-sm-9 col-6">
-              {{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}} <!-- Prepends comma to name for every artist after first -->
+              <p>{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
+              <p><button class="trackPlayBtn" data-track="{{id}}" data-playing="False">Play</button></p>
             </div>
           </div>
         {{/each}}
       </div>
     </script>
-
-
-
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="index.js"></script>
