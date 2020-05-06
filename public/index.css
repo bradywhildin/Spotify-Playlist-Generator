@@ -3,12 +3,24 @@
         font-size: 5vw;
     }
 
-    p button {
-        font-size: 10vw;
+    #tracks p {
+        font-size: 4vw;
+    }
+
+    button {
+        font-size: 8vw !important;
     }
 
     select {
-        font-size: 4vw;
+        font-size: 6vw;
+    }
+
+    #tracks p {
+        text-align: center;
+    }
+
+    .navbar {
+        font-size: 5vw;
     }
 }
 
@@ -43,4 +55,8 @@
 
 p select {
     width: 75%;
+}
+
+#noBrowserPlayer {
+    display: none;
 }

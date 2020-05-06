@@ -11,7 +11,6 @@
         return parseInt(index) + 1;
     });
     
-    var browserPlayerID;
     function selectTrack(artistID, callback) {
         $.ajax({
         url: 'https://api.spotify.com/v1/artists/' + artistID + '/top-tracks?country=US',
@@ -27,18 +26,26 @@
     function allowToPlayArtistTracks() {
         var artistPlayButtons = document.getElementsByClassName("artistPlayBtn");
         var trackIDs = [];
+        var url;
 
-        for (i = 0; i < artistPlayButtons.length; i++) {
+        if (deviceID == null) {
+            url = 'https://api.spotify.com/v1/me/player/play'
+        }
+        else {
+            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceID
+        }
+
+        for (var i = 0; i < artistPlayButtons.length; i++) {
             trackIDs.push("");
         }
 
-        for (i = 0; i < artistPlayButtons.length; i++) {
+        for (var i = 0; i < artistPlayButtons.length; i++) {
             (function(i) {
                 artistPlayButtons[i].addEventListener('click', function(event) {
                     trackIDs[i] = artistPlayButtons[i].nextSibling.nextSibling.value;
                     console.log(this.nextSibling.value);
                     $.ajax({
-                        url: 'https://api.spotify.com/v1/me/player/play?device_id=' + browserPlayerID,
+                        url: url,
                         type: 'PUT',
                         headers: {
                             'Authorization': 'Bearer ' + access_token
@@ -58,11 +65,11 @@
 
     function organizeArtistData(response) {
         var artists = [];
-        for (i = 0; i < 20; i++) {
+        for (var i = 0; i < 20; i++) {
             artists.push({})
         }
 
-        for (i = 0; i < 20; i++) {
+        for (var i = 0; i < 20; i++) {
             (function(i) {
                 const artistID = response.items[i].id;
                 selectTrack(artistID, function(response2) {
@@ -86,11 +93,19 @@
 
     function allowToPlayTopTracks() {
         var trackPlayButtons = document.getElementsByClassName("trackPlayBtn");
+        var url;
 
-        for (i = 0; i < trackPlayButtons.length; i++) {
+        if (deviceID == null) {
+            url = 'https://api.spotify.com/v1/me/player/play'
+        }
+        else {
+            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceID
+        }
+
+        for (var i = 0; i < trackPlayButtons.length; i++) {
             trackPlayButtons[i].addEventListener('click', function(event) {
                 $.ajax({
-                    url: 'https://api.spotify.com/v1/me/player/play?device_id=' + browserPlayerID,
+                    url: url,
                     type: 'PUT',
                     headers: {
                         'Authorization': 'Bearer ' + access_token
@@ -110,11 +125,11 @@
 
     function organizeTrackData(response) {
         var tracks = [];
-        for (i = 0; i < 50; i++) {
+        for (var i = 0; i < 50; i++) {
             tracks.push({})
         }
 
-        for (i = 0; i < 50; i++) {
+        for (var i = 0; i < 50; i++) {
             (function(i) {
                 const track = {
                     artists: response.items[i].artists,
@@ -140,15 +155,15 @@
         tracksTemplate = Handlebars.compile(tracksSource),
         tracksPlaceholder = document.getElementById('tracks');
     
+    function hideAllSections() {
+        $('#topArtists').hide();
+        $('#topTracks').hide();
+        $('.nav-item').removeClass('active');
+    }
+
     function displayStats(timeRange) {
         $('#login').hide();
         $('#loggedIn').show();
-
-        function hideAllSections() {
-            $('#topArtists').hide();
-            $('#topTracks').hide();
-            $('.nav-item').removeClass('active');
-        }
 
         hideAllSections()    
         $('#topArtists').show();
@@ -188,8 +203,21 @@
     }
 
     document.getElementById("refreshBtn").addEventListener("click", function()  {
+        artistSectionOn = document.getElementById("artistsBtn").classList.contains("active");
+
         timeRange = document.getElementById("timeRangeDropdown").value;
         displayStats(timeRange);
+        hideAllSections();
+
+        if (artistSectionOn) {
+            $('#topArtists').show();
+            $('#artistsBtn').addClass('active');
+        }
+        else {
+            $('#topTracks').show();
+            $('#tracksBtn').addClass('active');
+        }
+
     })
 
     /**
@@ -217,6 +245,12 @@
     } else {
         if (access_token) {
            displayStats("long_term");
+           setTimeout(function() { 
+                if (deviceID == null) {
+                    $('#noBrowserPlayer').show();
+                    alert("Since a browser player can't be created (probably because you're on mobile), you must have Spotify playing on some device to play songs.")
+                }
+            }, 3000);
         } else {
             // render initial screen
             $('#login').show();
@@ -224,6 +258,8 @@
         }
     }
     
+    var deviceID = null;
+
     window.onSpotifyWebPlaybackSDKReady = () => {
         const token = access_token;
         const player = new Spotify.Player({
@@ -245,7 +281,8 @@
     // Ready
     player.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
-        browserPlayerID = device_id;
+        deviceID = device_id;
+        $('#noBrowserPlayer').hide();
     });
     
     // Not Ready

@@ -9,11 +9,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <link rel="stylesheet" type="text/css" href="index.css">
-    <script>
-      function test() {
-        alert("ok");
-      }
-    </script>
   </head>
   <body>
     <h1 class="text-center">Spotify Web App</h1>
@@ -23,7 +18,7 @@
     </div>
 
     <div id="loggedIn">
-      <button id="refreshBtn">Refresh</button>
+      <button id="refreshBtn" class="btn btn-outline-info">Refresh</button>
       <select id="timeRangeDropdown">
         <option value="long_term">All-time</option>
         <option value="medium_term">Past 6 Months</option>
@@ -41,6 +36,10 @@
           </ul>
         </div>
       </nav>
+      <ul>
+        <li>You must have Spotify Premium to play songs</li>
+        <li id="noBrowserPlayer">You must have Spotify playing on some device to play songs</li>
+      </ul>
       <div id="topArtists">
         <div id="artists"></div>
       </div>
@@ -60,7 +59,7 @@
                   <h4>{{inc @index}}. {{name}}</h4>
                   <img src="{{image}}">
                   <p>
-                    <button class="artistPlayBtn">Play</button>
+                    <button class="artistPlayBtn btn btn-outline-secondary">Play</button>
                     <select>
                       {{#each tracks}}
                         <option value="{{id}}">{{name}}</option>
@@ -73,7 +72,7 @@
                 <h4>{{inc @index}}. {{name}}</h4>
                 <img src="{{image}}">
                 <p>
-                  <button class="artistPlayBtn" data-track="{{track.id}}">Play</button>
+                  <button class="artistPlayBtn btn btn-outline-secondary">Play</button>
                   <select>
                     {{#each tracks}}
                       <option value="{{id}}">{{name}}</option>
@@ -94,12 +93,12 @@
             <div class="col-1">
               {{inc @index}}.
             </div>
-            <div class="col-sm-2 col-5">
+            <div class="col-sm-2 col-4">
               <img src="{{image}}">
             </div>
             <div class="col-sm-9 col-6">
               <p>{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
-              <p><button class="trackPlayBtn" data-track="{{id}}" data-playing="False">Play</button></p>
+              <p><button class="trackPlayBtn btn btn-outline-secondary" data-track="{{id}}" data-playing="False">Play</button></p>
             </div>
           </div>
         {{/each}}
