@@ -60,3 +60,7 @@ p select {
 #noBrowserPlayer {
     display: none;
 }
+
+#trackNum {
+    font-size: 4vw;
+}

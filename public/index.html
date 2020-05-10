@@ -34,6 +34,9 @@
             <li class="nav-item" id="tracksBtn">
               <a class="nav-link" href="#">Songs</a>
             </li>
+            <li class="nav-item" id="playlistBtn">
+              <a class="nav-link" href="#">Playlist</a>
+            </li>
           </ul>
         </div>
       </nav>
@@ -46,6 +49,9 @@
       </div>
       <div id="topTracks">
         <div id="tracks"></div>
+      </div>
+      <div id="topPlaylist">
+        <div id="playlist"></div>
       </div>
     </div>
 
@@ -91,7 +97,7 @@
       <div class="container-fluid" id="tracksContainer">
         {{#each}}
           <div class="row">
-            <div class="col-1">
+            <div class="col-1 text-left" id="trackNum">
               {{inc @index}}.
             </div>
             <div class="col-sm-2 col-4">

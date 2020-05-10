@@ -158,6 +158,7 @@
     function hideAllSections() {
         $('#topArtists').hide();
         $('#topTracks').hide();
+        $('#topPlaylist').hide();
         $('.nav-item').removeClass('active');
     }
 
@@ -179,6 +180,12 @@
             hideAllSections();
             $('#topTracks').show();
             $('#tracksBtn').addClass('active');
+        });
+
+        document.getElementById("playlistBtn").addEventListener('click', function() {
+            hideAllSections();
+            $('#topPlaylists').show();
+            $('#playistBtn').addClass('active');
         });
 
         $.ajax({
