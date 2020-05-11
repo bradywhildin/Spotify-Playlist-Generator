@@ -10,6 +10,7 @@
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script> 
     <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="shortcut icon" href="">
   </head>
   <body>
     <h1 class="text-center">Spotify Web App</h1>
@@ -56,7 +57,7 @@
     </div>
 
     <script id="artists-template" type="text/x-handlebars-template">
-      <div class="container-fluid">
+      <div class="container-fluid" id="artistsContainer">
         <div class="row">
           {{#each}}
             {{#if needNewRow}}

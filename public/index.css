@@ -32,6 +32,10 @@
     select {
         font-size: 2.5vw;
     }
+
+    button {
+        font-size: 3.5vw !important;
+    }
 }
 
 @media (min-width: 992px) {
@@ -41,6 +45,10 @@
 
     select {
         font-size: 1.2vw;
+    }
+
+    button {
+        font-size: 2vw !important;
     }
 }
 

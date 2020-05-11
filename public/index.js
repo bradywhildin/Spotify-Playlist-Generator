@@ -10,20 +10,8 @@
     Handlebars.registerHelper("inc", function(index, options) {
         return parseInt(index) + 1;
     });
-    
-    function selectTrack(artistID, callback) {
-        $.ajax({
-        url: 'https://api.spotify.com/v1/artists/' + artistID + '/top-tracks?country=US',
-        headers: {
-            'Authorization': 'Bearer ' + access_token
-        },
-        success: function(response) {
-            callback(response);
-        }
-        });
-    }
 
-    function allowToPlayArtistTracks() {
+    function allowToPlayArtistTracks(deviceID) {
         var artistPlayButtons = document.getElementsByClassName("artistPlayBtn");
         var trackIDs = [];
         var url;
@@ -43,7 +31,6 @@
             (function(i) {
                 artistPlayButtons[i].addEventListener('click', function(event) {
                     trackIDs[i] = artistPlayButtons[i].nextSibling.nextSibling.value;
-                    console.log(this.nextSibling.value);
                     $.ajax({
                         url: url,
                         type: 'PUT',
@@ -57,13 +44,26 @@
                         }),
                         success: console.log("Playing track " + trackIDs[i])
                     });
-                    return false;
                 });
             })(i);
         };
     };
 
-    function organizeArtistData(response) {
+    var artistTopTracksReq;
+
+    function getArtistTopTracks(artistID, callback) {
+        artistTopTracksReq = $.ajax({
+            url: 'https://api.spotify.com/v1/artists/' + artistID + '/top-tracks?country=US',
+            headers: {
+                'Authorization': 'Bearer ' + access_token
+            },
+            success: function(response) {
+                callback(response);
+            }
+        });
+    }
+
+    function organizeArtistData(response, deviceID) {
         var artists = [];
         for (var i = 0; i < 20; i++) {
             artists.push({})
@@ -72,7 +72,7 @@
         for (var i = 0; i < 20; i++) {
             (function(i) {
                 const artistID = response.items[i].id;
-                selectTrack(artistID, function(response2) {
+                getArtistTopTracks(artistID, function(response2) {
                     const artist = {
                         name: response.items[i].name,
                         image: response.items[i].images[0].url,
@@ -83,15 +83,13 @@
             })(i)
         }
 
-        console.log(artists);
-
-        $(document).ajaxStop(function () {
+        $.when(artistTopTracksReq).done(function () {
             artistsPlaceholder.innerHTML = artistsTemplate(artists);
-            allowToPlayArtistTracks();
+            allowToPlayArtistTracks(deviceID);
         });
     }
 
-    function allowToPlayTopTracks() {
+    function allowToPlayTopTracks(deviceID) {
         var trackPlayButtons = document.getElementsByClassName("trackPlayBtn");
         var url;
 
@@ -123,7 +121,7 @@
         };
     };
 
-    function organizeTrackData(response) {
+    function organizeTrackData(response, deviceID) {
         var tracks = [];
         for (var i = 0; i < 50; i++) {
             tracks.push({})
@@ -141,11 +139,16 @@
             })(i)
         }
 
-        $(document).ajaxStop(function () {
-            tracksPlaceholder.innerHTML = tracksTemplate(tracks);
-            allowToPlayTopTracks();
-        });
+        tracksPlaceholder.innerHTML = tracksTemplate(tracks);
+        allowToPlayTopTracks(deviceID);
     }
+
+    /*
+    function organizePlaylistData(response) {
+
+    }
+    */
+
 
     var artistsSource = document.getElementById('artists-template').innerHTML,
         artistsTemplate = Handlebars.compile(artistsSource),
@@ -154,7 +157,13 @@
     var tracksSource = document.getElementById('tracks-template').innerHTML,
         tracksTemplate = Handlebars.compile(tracksSource),
         tracksPlaceholder = document.getElementById('tracks');
-    
+
+        /*
+    var playlistSource = document.getElementById('playlist-template').innerHTML,
+        playlistTemplate = Handlebars.compile(playlistSource),
+        playlistPlaceholder = document.getElementById('playlist');
+        */
+
     function hideAllSections() {
         $('#topArtists').hide();
         $('#topTracks').hide();
@@ -162,7 +171,7 @@
         $('.nav-item').removeClass('active');
     }
 
-    function displayStats(timeRange) {
+    function displayStats(timeRange, deviceID) {
         $('#login').hide();
         $('#loggedIn').show();
 
@@ -188,24 +197,31 @@
             $('#playistBtn').addClass('active');
         });
 
-        $.ajax({
+        var artistData, trackData;
+
+        var artistReq = $.ajax({
             url: 'https://api.spotify.com/v1/me/top/artists?time_range=' + timeRange + '&limit=20',
             headers: {
                 'Authorization': 'Bearer ' + access_token
             },
             success: function(response) {
-                organizeArtistData(response);
+                artistData = response;
             }
         });
 
-        $.ajax({
+        var trackReq = $.ajax({
             url: 'https://api.spotify.com/v1/me/top/tracks?time_range=' + timeRange + '&limit=50',
             headers: {
                 'Authorization': 'Bearer ' + access_token
             },
             success: function(response) {
-                organizeTrackData(response);
+                trackData = response;
             }   
+        });
+
+        $.when(artistReq, trackReq).done(function () {
+            organizeArtistData(artistData, deviceID);
+            organizeTrackData(trackData, deviceID);
         });
     }
 
@@ -224,7 +240,6 @@
             $('#topTracks').show();
             $('#tracksBtn').addClass('active');
         }
-
     })
 
     /**
@@ -247,57 +262,52 @@
         refresh_token = params.refresh_token,
         error = params.error;
 
+
     if (error) {
         alert('There was an error during the authentication');
     } else {
         if (access_token) {
-           displayStats("long_term");
-           setTimeout(function() { 
-                if (deviceID == null) {
-                    $('#noBrowserPlayer').show();
-                    alert("Since a browser player can't be created (probably because you're on mobile), you must have Spotify playing on some device to play songs.")
-                }
-            }, 3000);
+            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                // some code..
+            }
+            else {
+                window.onSpotifyWebPlaybackSDKReady = () => {
+                    const token = access_token;
+                    const player = new Spotify.Player({
+                        name: 'Spotify Web App Player',
+                        getOAuthToken: cb => { cb(token); },
+                        volume: 0.1
+                    });
+                
+                    // Error handling
+                    player.addListener('initialization_error', ({ message }) => { console.error(message); });
+                    player.addListener('authentication_error', ({ message }) => { console.error(message); });
+                    player.addListener('account_error', ({ message }) => { console.error(message); });
+                    player.addListener('playback_error', ({ message }) => { console.error(message); });
+                    
+                    // Playback status updates
+                    player.addListener('player_state_changed', state => { console.log(state); });
+                
+                    // Ready
+                    player.addListener('ready', ({ device_id }) => {
+                        console.log('Ready with Device ID', device_id);
+                        $('#noBrowserPlayer').hide();
+                        displayStats("long_term", device_id);
+                    });
+                    
+                    // Not Ready
+                    player.addListener('not_ready', ({ device_id }) => {
+                        console.log('Device ID has gone offline', device_id);
+                    });
+                    
+                    // Connect to the player!
+                    player.connect();
+                };
+            }
         } else {
             // render initial screen
             $('#login').show();
             $('#loggedIn').hide();
         }
     }
-    
-    var deviceID = null;
-
-    window.onSpotifyWebPlaybackSDKReady = () => {
-        const token = access_token;
-        const player = new Spotify.Player({
-        name: 'Spotify Web App Player',
-        getOAuthToken: cb => { cb(token); },
-        volume: 0.1
-    });
-
-    // Error handling
-    player.addListener('initialization_error', ({ message }) => { console.error(message); });
-    player.addListener('authentication_error', ({ message }) => { console.error(message); });
-    player.addListener('account_error', ({ message }) => { console.error(message); });
-    player.addListener('playback_error', ({ message }) => { console.error(message); });
-    
-    // Playback status updates
-    player.addListener('player_state_changed', state => { console.log(state); });
-    
-
-    // Ready
-    player.addListener('ready', ({ device_id }) => {
-        console.log('Ready with Device ID', device_id);
-        deviceID = device_id;
-        $('#noBrowserPlayer').hide();
-    });
-    
-    // Not Ready
-    player.addListener('not_ready', ({ device_id }) => {
-        console.log('Device ID has gone offline', device_id);
-    });
-    
-    // Connect to the player!
-    player.connect();
-    };
 })();
