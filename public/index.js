@@ -16,11 +16,11 @@
         var trackIDs = [];
         var url;
 
-        if (deviceID == null) {
-            url = 'https://api.spotify.com/v1/me/player/play'
+        if (deviceID) {
+            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceID
         }
         else {
-            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceID
+            url = 'https://api.spotify.com/v1/me/player/play'
         }
 
         for (var i = 0; i < artistPlayButtons.length; i++) {
@@ -93,11 +93,11 @@
         var trackPlayButtons = document.getElementsByClassName("trackPlayBtn");
         var url;
 
-        if (deviceID == null) {
-            url = 'https://api.spotify.com/v1/me/player/play'
+        if (deviceID) {
+            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceID
         }
         else {
-            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceID
+            url = 'https://api.spotify.com/v1/me/player/play'
         }
 
         for (var i = 0; i < trackPlayButtons.length; i++) {
@@ -140,6 +140,7 @@
         }
 
         tracksPlaceholder.innerHTML = tracksTemplate(tracks);
+
         allowToPlayTopTracks(deviceID);
     }
 
@@ -191,11 +192,13 @@
             $('#tracksBtn').addClass('active');
         });
 
+        /*
         document.getElementById("playlistBtn").addEventListener('click', function() {
             hideAllSections();
             $('#topPlaylists').show();
             $('#playistBtn').addClass('active');
         });
+        */
 
         var artistData, trackData;
 
@@ -225,22 +228,24 @@
         });
     }
 
-    document.getElementById("refreshBtn").addEventListener("click", function()  {
-        artistSectionOn = document.getElementById("artistsBtn").classList.contains("active");
+    function readyRefreshBtn(deviceID) {
+        document.getElementById("refreshBtn").addEventListener("click", function()  {
+            artistSectionOn = document.getElementById("artistsBtn").classList.contains("active");
 
-        timeRange = document.getElementById("timeRangeDropdown").value;
-        displayStats(timeRange);
-        hideAllSections();
+            timeRange = document.getElementById("timeRangeDropdown").value;
+            displayStats(timeRange, deviceID);
+            hideAllSections();
 
-        if (artistSectionOn) {
-            $('#topArtists').show();
-            $('#artistsBtn').addClass('active');
-        }
-        else {
-            $('#topTracks').show();
-            $('#tracksBtn').addClass('active');
-        }
-    })
+            if (artistSectionOn) {
+                $('#topArtists').show();
+                $('#artistsBtn').addClass('active');
+            }
+            else {
+                $('#topTracks').show();
+                $('#tracksBtn').addClass('active');
+            };
+        });
+    };
 
     /**
      * Obtains parameters from the hash of the URL
@@ -262,13 +267,14 @@
         refresh_token = params.refresh_token,
         error = params.error;
 
-
     if (error) {
         alert('There was an error during the authentication');
     } else {
         if (access_token) {
             if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-                // some code..
+                $('#mobileDevice').show()
+                displayStats("long_term", null);
+                readyRefreshBtn(null);
             }
             else {
                 window.onSpotifyWebPlaybackSDKReady = () => {
@@ -280,7 +286,13 @@
                     });
                 
                     // Error handling
-                    player.addListener('initialization_error', ({ message }) => { console.error(message); });
+                    player.addListener('initialization_error', ({ message }) => { 
+                        console.error(message);
+                        $('#mobileDevice').show()
+                        displayStats("long_term", null);
+                        readyRefreshBtn(null);
+                    });
+
                     player.addListener('authentication_error', ({ message }) => { console.error(message); });
                     player.addListener('account_error', ({ message }) => { console.error(message); });
                     player.addListener('playback_error', ({ message }) => { console.error(message); });
@@ -291,8 +303,8 @@
                     // Ready
                     player.addListener('ready', ({ device_id }) => {
                         console.log('Ready with Device ID', device_id);
-                        $('#noBrowserPlayer').hide();
                         displayStats("long_term", device_id);
+                        readyRefreshBtn(device_id);
                     });
                     
                     // Not Ready
