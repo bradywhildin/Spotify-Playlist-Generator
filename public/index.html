@@ -35,11 +35,9 @@
             <li class="nav-item" id="tracksBtn">
               <a class="nav-link" href="#">Songs</a>
             </li>
-            <!--
             <li class="nav-item" id="playlistBtn">
               <a class="nav-link" href="#">Playlist</a>
             </li>
-            -->
           </ul>
         </div>
       </nav>
@@ -114,6 +112,13 @@
         {{/each}}
       </div>
     </script>
+
+    <script id="playlist-template" type="text/x-handlebars-template">
+      {{#each}}
+        <p>{{name}}</p>
+      {{/each}}
+    </script>
+
     <script src="index.js"></script>
   </body>
 </html>

@@ -144,11 +144,40 @@
         allowToPlayTopTracks(deviceID);
     }
 
-    /*
-    function organizePlaylistData(response) {
-
+    function getRandomInt() {
+        return Math.floor(Math.random() * 20)
     }
-    */
+
+    function organizePlaylistData(artistData, trackData, deviceID) {
+        var artistIDs = []
+        
+        // randomly chooses 5 out of top 20 artists
+        for (var i = 0; i < 5; i++) {
+            var num;
+            var numWasUsed = true
+
+            while (numWasUsed) {
+                num = getRandomInt();
+                if (!(artistIDs.includes(artistData.items[num].id))) { // if artist ID was already chosen, pick different one
+                    numWasUsed = false;
+                }
+            }
+
+            artistIDs.push(artistData.items[num].id);
+        }
+
+        artistIDS = artistIDs.join(",");
+
+        var recommendReq = $.ajax({
+            url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + artistIDs,
+            headers: {
+                'Authorization': 'Bearer ' + access_token
+            },
+            success: function(response) {
+                playlistPlaceholder.innerHTML = playlistTemplate(response.tracks);
+            }
+        });
+    }
 
 
     var artistsSource = document.getElementById('artists-template').innerHTML,
@@ -159,11 +188,9 @@
         tracksTemplate = Handlebars.compile(tracksSource),
         tracksPlaceholder = document.getElementById('tracks');
 
-        /*
     var playlistSource = document.getElementById('playlist-template').innerHTML,
         playlistTemplate = Handlebars.compile(playlistSource),
         playlistPlaceholder = document.getElementById('playlist');
-        */
 
     function hideAllSections() {
         $('#topArtists').hide();
@@ -192,13 +219,11 @@
             $('#tracksBtn').addClass('active');
         });
 
-        /*
         document.getElementById("playlistBtn").addEventListener('click', function() {
             hideAllSections();
-            $('#topPlaylists').show();
-            $('#playistBtn').addClass('active');
+            $('#topPlaylist').show();
+            $('#playlistBtn').addClass('active');
         });
-        */
 
         var artistData, trackData;
 
@@ -225,6 +250,7 @@
         $.when(artistReq, trackReq).done(function () {
             organizeArtistData(artistData, deviceID);
             organizeTrackData(trackData, deviceID);
+            organizePlaylistData(artistData, trackData, deviceID);
         });
     }
 
