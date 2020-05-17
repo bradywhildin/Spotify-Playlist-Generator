@@ -35,8 +35,8 @@
             <li class="nav-item" id="tracksBtn">
               <a class="nav-link" href="#">Songs</a>
             </li>
-            <li class="nav-item" id="playlistBtn">
-              <a class="nav-link" href="#">Playlist</a>
+            <li class="nav-item" id="playlistsBtn">
+              <a class="nav-link" href="#">Playlists</a>
             </li>
           </ul>
         </div>
@@ -51,8 +51,8 @@
       <div id="topTracks">
         <div id="tracks"></div>
       </div>
-      <div id="topPlaylist">
-        <div id="playlist"></div>
+      <div id="topPlaylists">
+        <div id="playlists"></div>
       </div>
     </div>
 
@@ -63,32 +63,20 @@
             {{#if needNewRow}}
               </div>
               <div class="row">
-                <div class="col-lg-3 col-sm-6 col-12">
-                  <h4>{{inc @index}}. {{name}}</h4>
-                  <img src="{{image}}">
-                  <p>
-                    <button class="artistPlayBtn btn btn-outline-secondary">Play</button>
-                    <select>
-                      {{#each tracks}}
-                        <option value="{{id}}">{{name}}</option>
-                      {{/each}}
-                    </select>
-                  </p>
-                </div>
-            {{else}}
-              <div class="col-lg-3 col-sm-6 col-12">
-                <h4>{{inc @index}}. {{name}}</h4>
-                <img src="{{image}}">
-                <p>
-                  <button class="artistPlayBtn btn btn-outline-secondary">Play</button>
-                  <select>
-                    {{#each tracks}}
-                      <option value="{{id}}">{{name}}</option>
-                    {{/each}}
-                  </select>
-                </p>
-              </div>
             {{/if}}
+
+            <div class="col-lg-3 col-sm-6 col-12">
+              <h4>{{inc @index}}. {{name}}</h4>
+              <img src="{{image}}">
+              <p>
+                <button class="artistPlayBtn btn btn-outline-secondary">Play</button>
+                <select>
+                  {{#each tracks}}
+                    <option value="{{id}}">{{name}}</option>
+                  {{/each}}
+                </select>
+              </p>
+            </div>
           {{/each}}
         </div>
       </div>
@@ -113,10 +101,36 @@
       </div>
     </script>
 
-    <script id="playlist-template" type="text/x-handlebars-template">
-      {{#each}}
-        <p>{{name}}</p>
-      {{/each}}
+    <script id="playlists-template" type="text/x-handlebars-template">
+      <div class="container-fluid">
+        <select id="playlistsDropdown">
+          {{#each this}}
+            {{#if @first}}
+              <option value="{{dashedGenre}}" selected>{{genre}}</option>
+            {{else}}
+              <option value="{{dashedGenre}}">{{genre}}</option>
+            {{/if}}
+          {{/each}}
+        </select>
+        {{#each this}}
+          <div id="{{dashedGenre}}" class="playlist" data-index="{{@index}}">
+            {{#each tracks}}
+              <div class="row">
+                <div class="col-1 text-left" id="trackNum">
+                  {{inc @index}}.
+                </div>
+                <div class="col-sm-2 col-4">
+                  <img src="{{album.images.0.url}}">
+                </div>
+                <div class="col-sm-9 col-6">
+                  <p>{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
+                  <p><button class="trackPlayBtn btn btn-outline-secondary" data-track="{{id}}" data-playing="False">Play</button></p>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{/each}}
+      </div>
     </script>
 
     <script src="index.js"></script>

@@ -1,4 +1,5 @@
 (function() {
+    // starts new Bootstrap row at every multiple of 4
     Handlebars.registerHelper('needNewRow', function (index, options) {
         if ((index % 4 == 0) && (index != 0)) {
            return options.fn(this);
@@ -27,6 +28,7 @@
             trackIDs.push("");
         }
 
+        // adds event listener to each button to play selected song
         for (var i = 0; i < artistPlayButtons.length; i++) {
             (function(i) {
                 artistPlayButtons[i].addEventListener('click', function(event) {
@@ -65,11 +67,12 @@
 
     function organizeArtistData(response, deviceID) {
         var artists = [];
-        for (var i = 0; i < 20; i++) {
+        for (var i = 0; i < response.items.length; i++) {
             artists.push({})
         }
 
-        for (var i = 0; i < 20; i++) {
+        // combines each artist with their top tracks
+        for (var i = 0; i < response.items.length; i++) {
             (function(i) {
                 const artistID = response.items[i].id;
                 getArtistTopTracks(artistID, function(response2) {
@@ -83,25 +86,28 @@
             })(i)
         }
 
+        // waits to fill out HTML until requests to get artists' top songs are done
         $.when(artistTopTracksReq).done(function () {
             artistsPlaceholder.innerHTML = artistsTemplate(artists);
             allowToPlayArtistTracks(deviceID);
         });
     }
 
-    function allowToPlayTopTracks(deviceID) {
-        var trackPlayButtons = document.getElementsByClassName("trackPlayBtn");
+    function allowToPlayTracks(playButtonsClass, deviceID) {
+        var playButtons = document.getElementsByClassName(playButtonsClass);
         var url;
 
+        // determines which device to play on
         if (deviceID) {
-            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceID
+            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceID;
         }
         else {
-            url = 'https://api.spotify.com/v1/me/player/play'
+            url = 'https://api.spotify.com/v1/me/player/play';
         }
 
-        for (var i = 0; i < trackPlayButtons.length; i++) {
-            trackPlayButtons[i].addEventListener('click', function(event) {
+        // adds event listener to each track to play track
+        for (var i = 0; i < playButtons.length; i++) {
+            playButtons[i].addEventListener('click', function(event) {
                 $.ajax({
                     url: url,
                     type: 'PUT',
@@ -119,15 +125,16 @@
                 return false;
             });
         };
-    };
+    }
 
     function organizeTrackData(response, deviceID) {
         var tracks = [];
-        for (var i = 0; i < 50; i++) {
+        for (var i = 0; i < response.items.length; i++) {
             tracks.push({})
         }
 
-        for (var i = 0; i < 50; i++) {
+        // organizes track data
+        for (var i = 0; i < response.items.length; i++) {
             (function(i) {
                 const track = {
                     artists: response.items[i].artists,
@@ -139,45 +146,111 @@
             })(i)
         }
 
+        // fills out HTML with track data
         tracksPlaceholder.innerHTML = tracksTemplate(tracks);
 
-        allowToPlayTopTracks(deviceID);
+        allowToPlayTracks("trackPlayBtn", deviceID);
     }
 
-    function getRandomInt() {
-        return Math.floor(Math.random() * 20)
+    var recommendedSongs = [];
+
+    function showPlaylist() {
+        $('#' + recommendedSongs[0].dashedGenre).show();
+        $('#playlistsDropdown').value = recommendedSongs[0].dashedGenre;
+
+        $('#playlistsDropdown').on('change', function () {
+            $('.playlist').hide();
+            $('#' + this.value).show();
+        });
     }
 
-    function organizePlaylistData(artistData, trackData, deviceID) {
-        var artistIDs = []
-        
-        // randomly chooses 5 out of top 20 artists
-        for (var i = 0; i < 5; i++) {
-            var num;
-            var numWasUsed = true
-
-            while (numWasUsed) {
-                num = getRandomInt();
-                if (!(artistIDs.includes(artistData.items[num].id))) { // if artist ID was already chosen, pick different one
-                    numWasUsed = false;
-                }
-            }
-
-            artistIDs.push(artistData.items[num].id);
-        }
-
-        artistIDS = artistIDs.join(",");
-
-        var recommendReq = $.ajax({
-            url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + artistIDs,
+    function makeAnotherRecommendReq(genre, dashedGenre, artistIDs, deviceID) {
+        $.ajax({
+            url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + dashedGenre + '&seed_artists=' + artistIDs + '&limit=30',
             headers: {
                 'Authorization': 'Bearer ' + access_token
             },
+            retryCount: 1,
+            retryLimit: 4,
             success: function(response) {
-                playlistPlaceholder.innerHTML = playlistTemplate(response.tracks);
+                console.log("Sucessful on try " + (this.retryCount + 1).toString())
+                recommendedSongs.push({
+                    genre: genre,
+                    dashedGenre: dashedGenre,
+                    tracks: response.tracks
+                });
+                playlistsPlaceholder.innerHTML = playlistsTemplate(recommendedSongs);
+                console.log($('#playlistsDropdown').value);
+                showPlaylist();
+                allowToPlayTracks('trackPlayBtn', deviceID);
+            },
+            error: function() {
+                this.retryCount++;
+                if (this.retryCount <= this.retryLimit) {
+                    console.log("try " + this.retryCount.toString() + " unsuccessful, trying again")
+                    makeAnotherRecommendReq(genre, dashedGenre, artistIDs)
+                }
+                else {
+                    console.log("Request failed 3 times, giving up")
+                }
             }
         });
     }
+
+    function organizePlaylistData(artistData, deviceID) {
+        var genres = {};
+
+        // makes each genre a key and makes the value a list of artists associated with the genre
+        for (var i = 0; i < artistData.items.length; i++) {
+            for (var j = 0; j < artistData.items[i].genres.length; j++) {
+                var genre = artistData.items[i].genres[j];
+                if (genres.hasOwnProperty(genre)) {
+                    if (genres[genre].length < 4) {
+                        genres[genre].push(artistData.items[i].id);
+                    };
+                }
+                else {
+                    genres[genre] = [artistData.items[i].id];
+                };
+            }
+        };
+
+        var genresList = Object.keys(genres);
+        var recommendReq;
+        recommendedSongs = [];
+
+        for (var i = 0; i < genresList.length; i++) {
+            (function(i) {
+                var genre = genresList[i];
+                var dashedGenre = genre.split(' ').join('-'); // replaces spaces with dashes
+                var artistIDs = genres[genre].join();
+                recommendReq = $.ajax({
+                    url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + dashedGenre + '&seed_artists=' + artistIDs + '&limit=30',
+                    headers: {
+                        'Authorization': 'Bearer ' + access_token
+                    },
+                    success: function(response) {
+                        recommendedSongs.push({
+                            genre: genre,
+                            dashedGenre: dashedGenre,
+                            tracks: response.tracks
+                        });
+                    },
+                    error : function(xhr, textStatus, errorThrown ) {
+                        console.log("try 1 unsuccessful, retrying")
+                        makeAnotherRecommendReq(genre, dashedGenre, artistIDs, deviceID);
+                        return;
+                    }
+                });
+            })(i);
+        };
+
+        $.when(recommendReq).done(function () {
+            playlistsPlaceholder.innerHTML = playlistsTemplate(recommendedSongs);
+            showPlaylist();
+            allowToPlayTracks('trackPlayBtn', deviceID);
+        });
+    };
 
 
     var artistsSource = document.getElementById('artists-template').innerHTML,
@@ -188,14 +261,14 @@
         tracksTemplate = Handlebars.compile(tracksSource),
         tracksPlaceholder = document.getElementById('tracks');
 
-    var playlistSource = document.getElementById('playlist-template').innerHTML,
-        playlistTemplate = Handlebars.compile(playlistSource),
-        playlistPlaceholder = document.getElementById('playlist');
+    var playlistsSource = document.getElementById('playlists-template').innerHTML,
+        playlistsTemplate = Handlebars.compile(playlistsSource),
+        playlistsPlaceholder = document.getElementById('playlists');
 
     function hideAllSections() {
         $('#topArtists').hide();
         $('#topTracks').hide();
-        $('#topPlaylist').hide();
+        $('#topPlaylists').hide();
         $('.nav-item').removeClass('active');
     }
 
@@ -219,10 +292,10 @@
             $('#tracksBtn').addClass('active');
         });
 
-        document.getElementById("playlistBtn").addEventListener('click', function() {
+        document.getElementById("playlistsBtn").addEventListener('click', function() {
             hideAllSections();
-            $('#topPlaylist').show();
-            $('#playlistBtn').addClass('active');
+            $('#topPlaylists').show();
+            $('#playlistsBtn').addClass('active');
         });
 
         var artistData, trackData;
@@ -250,26 +323,33 @@
         $.when(artistReq, trackReq).done(function () {
             organizeArtistData(artistData, deviceID);
             organizeTrackData(trackData, deviceID);
-            organizePlaylistData(artistData, trackData, deviceID);
+            organizePlaylistData(artistData, deviceID);
         });
     }
 
+    // refreshes page with selected time range on button click
     function readyRefreshBtn(deviceID) {
         document.getElementById("refreshBtn").addEventListener("click", function()  {
             artistSectionOn = document.getElementById("artistsBtn").classList.contains("active");
+            trackSectionOn = document.getElementById("tracksBtn").classList.contains("active");
 
             timeRange = document.getElementById("timeRangeDropdown").value;
             displayStats(timeRange, deviceID);
             hideAllSections();
 
+            // shows section that was up when button is clicked
             if (artistSectionOn) {
                 $('#topArtists').show();
                 $('#artistsBtn').addClass('active');
             }
-            else {
+            else if (trackSectionOn) {
                 $('#topTracks').show();
                 $('#tracksBtn').addClass('active');
-            };
+            }
+            else {
+                $('#topPlaylists').show();
+                $('#playlistsBtn').addClass('active');
+            }
         });
     };
 

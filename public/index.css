@@ -3,7 +3,7 @@
         font-size: 5vw;
     }
 
-    #tracks p {
+    #tracks p, #playlists p {
         font-size: 4vw;
     }
 
@@ -57,7 +57,7 @@
     width: 100%;
 }
 
-#tracksContainer .row {
+#tracksContainer .row, .playlist .row {
     margin: 20px 0;
 }
 
@@ -74,5 +74,13 @@ p select {
 }
 
 #mobileDevice {
+    display: none;
+}
+
+#topArtists, #topTracks, #topPlaylists {
+    display: none;
+}
+
+.playlist {
     display: none;
 }
