@@ -57,7 +57,7 @@
     width: 100%;
 }
 
-#tracksContainer .row, .playlist .row {
+#tracksContainer .row, .playlist .row, .addPlaylist {
     margin: 20px 0;
 }
 

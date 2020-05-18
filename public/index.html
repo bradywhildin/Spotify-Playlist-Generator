@@ -106,14 +106,15 @@
         <select id="playlistsDropdown">
           {{#each this}}
             {{#if @first}}
-              <option value="{{dashedGenre}}" selected>{{genre}}</option>
+              <option value="{{dashedGenre}}" selected>{{capitalGenre}}</option>
             {{else}}
-              <option value="{{dashedGenre}}">{{genre}}</option>
+              <option value="{{dashedGenre}}">{{capitalGenre}}</option>
             {{/if}}
           {{/each}}
         </select>
         {{#each this}}
           <div id="{{dashedGenre}}" class="playlist" data-index="{{@index}}">
+            <button class="addPlaylist btn btn-outline-success">Add playlist to account</button>
             {{#each tracks}}
               <div class="row">
                 <div class="col-1 text-left" id="trackNum">
