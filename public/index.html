@@ -10,7 +10,7 @@
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script> 
     <link rel="stylesheet" type="text/css" href="index.css">
-    <link rel="shortcut icon" href="">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png"><link rel="shortcut icon" href="">
   </head>
   <body>
     <h1 class="text-center">Spotify Web App</h1>
@@ -115,6 +115,7 @@
         {{#each this}}
           <div id="{{dashedGenre}}" class="playlist" data-index="{{@index}}">
             <button class="addPlaylist btn btn-outline-success">Add playlist to account</button>
+            <p id="{{dashedGenre}}-added" class="playlistAdded">Playlist added!</p>
             {{#each tracks}}
               <div class="row">
                 <div class="col-1 text-left" id="trackNum">

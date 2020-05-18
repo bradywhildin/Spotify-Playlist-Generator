@@ -6,8 +6,9 @@ var cookieParser = require('cookie-parser');
 
 var client_id = '9125f568f4c54a31b81e3a940b0383ff'; // Your client id
 var client_secret = '38fbf45fac2641a09e1ca821fecb24a5'; // Your secret
-//var redirect_uri = 'https://spotifydataapp.herokuapp.com/callback'; // Your redirect uri
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+var redirect_uri = 'https://spotifydataapp.herokuapp.com/callback'; // Your redirect uri
+//var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+//var redirect_uri = 'http://192.168.1.102:8888/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -135,10 +136,9 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-app.listen(8888)
+//app.listen(8888)
 
-/*
+
 app.listen(process.env.PORT || 3000, function(){
   console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
 });
-*/

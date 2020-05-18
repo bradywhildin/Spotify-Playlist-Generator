@@ -84,3 +84,7 @@ p select {
 .playlist {
     display: none;
 }
+
+.playlistAdded {
+    display:none;
+}
