@@ -57,7 +57,7 @@
     width: 100%;
 }
 
-#tracksContainer .row, .playlist .row, .addPlaylist {
+#tracksContainer .row, .row, .addPlaylist {
     margin: 20px 0;
 }
 
@@ -87,4 +87,16 @@ p select {
 
 .playlistAdded {
     display:none;
+}
+
+.artistPlayBtn {
+    width: 100%;
+}
+
+.row div {
+    margin: 20px 0;
+}
+
+.timeRange {
+    text-align: right;
 }

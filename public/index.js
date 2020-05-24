@@ -16,95 +16,15 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    function allowToPlayArtistTracks(deviceID) {
-        var artistPlayButtons = document.getElementsByClassName("artistPlayBtn");
-        var trackIDs = [];
-        var url;
+    var deviceId;
 
-        if (deviceID) {
-            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceID
-        }
-        else {
-            url = 'https://api.spotify.com/v1/me/player/play'
-        }
-
-        for (var i = 0; i < artistPlayButtons.length; i++) {
-            trackIDs.push("");
-        }
-
-        // adds event listener to each button to play selected song
-        for (var i = 0; i < artistPlayButtons.length; i++) {
-            (function(i) {
-                artistPlayButtons[i].outerHTML = artistPlayButtons[i].outerHTML;
-                artistPlayButtons[i].addEventListener('click', function() {
-                    trackIDs[i] = artistPlayButtons[i].nextSibling.nextSibling.value;
-                    $.ajax({
-                        url: url,
-                        type: 'PUT',
-                        headers: {
-                            'Authorization': 'Bearer ' + access_token
-                        },
-                        dataType: "json",
-                        contentType: "application/json",
-                        data: JSON.stringify({
-                            "uris": ["spotify:track:" + trackIDs[i]],
-                        }),
-                        success: console.log("Playing track " + trackIDs[i])
-                    });
-                });
-            })(i);
-        };
-    };
-
-    var artistTopTracksReq;
-
-    function getArtistTopTracks(artistID, callback) {
-        artistTopTracksReq = $.ajax({
-            url: 'https://api.spotify.com/v1/artists/' + artistID + '/top-tracks?country=US',
-            headers: {
-                'Authorization': 'Bearer ' + access_token
-            },
-            success: function(response) {
-                callback(response);
-            }
-        });
-    }
-
-    function organizeArtistData(response, deviceID) {
-        var artists = [];
-        for (var i = 0; i < response.items.length; i++) {
-            artists.push({})
-        }
-
-        // combines each artist with their top tracks
-        for (var i = 0; i < response.items.length; i++) {
-            (function(i) {
-                const artistID = response.items[i].id;
-                getArtistTopTracks(artistID, function(response2) {
-                    const artist = {
-                        name: response.items[i].name,
-                        image: response.items[i].images[0].url,
-                        tracks: response2.tracks
-                    }
-                    artists[i] = artist;
-                });
-            })(i)
-        }
-
-        // waits to fill out HTML until requests to get artists' top songs are done
-        $.when(artistTopTracksReq).done(function () {
-            artistsPlaceholder.innerHTML = artistsTemplate(artists);
-            allowToPlayArtistTracks(deviceID);
-        });
-    }
-
-    function allowToPlayTracks(playButtonsClass, deviceID) {
+    function allowToPlayTracks(playButtonsClass, type) {
         var playButtons = document.getElementsByClassName(playButtonsClass);
         var url;
 
         // determines which device to play on
-        if (deviceID) {
-            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceID;
+        if (deviceId) {
+            url = 'https://api.spotify.com/v1/me/player/play?device_id=' + deviceId;
         }
         else {
             url = 'https://api.spotify.com/v1/me/player/play';
@@ -114,6 +34,18 @@
         for (var i = 0; i < playButtons.length; i++) {
             playButtons[i].outerHTML = playButtons[i].outerHTML;
             playButtons[i].addEventListener('click', function() {
+                var data;
+                if (type == 'track') {
+                    data = JSON.stringify({
+                        'uris': ['spotify:track:' + this.getAttribute('data-trackId')]
+                    });
+                }
+                else if (type == 'artist') {
+                    data = JSON.stringify({
+                        'context_uri': 'spotify:artist:' + this.getAttribute('data-trackId')
+                    });
+                };
+
                 $.ajax({
                     url: url,
                     type: 'PUT',
@@ -122,10 +54,8 @@
                     },
                     dataType: "json",
                     contentType: "application/json",
-                    data: JSON.stringify({
-                        'uris': ['spotify:track:' + this.getAttribute('data-track')]
-                    }),
-                    success: console.log("Playing track " + this.getAttribute("data-track"))
+                    data: data,
+                    success: console.log("Playing " + type + " " + this.getAttribute("data-trackId"))
                 });
 
                 return false;
@@ -133,7 +63,21 @@
         };
     };
 
-    function organizeTrackData(response, deviceID) {
+    function organizeArtistData(response) {
+        var artists = [];
+        for (var i = 0; i < response.items.length; i++) {
+            artists.push({
+                id: response.items[i].id,
+                image: response.items[i].images[0].url,
+                name: response.items[i].name
+            });
+        };
+
+        artistsPlaceholder.innerHTML = artistsTemplate(artists);
+        allowToPlayTracks('artistPlayBtn', 'artist');
+    };
+
+    function organizeTrackData(response) {
         var tracks = [];
         for (var i = 0; i < response.items.length; i++) {
             tracks.push({});
@@ -155,20 +99,17 @@
         // fills out HTML with track data
         tracksPlaceholder.innerHTML = tracksTemplate(tracks);
 
-        allowToPlayTracks("trackPlayBtn", deviceID);
+        allowToPlayTracks("trackPlayBtn", "track");
     }
 
-    var recommendedSongs = [];
-
-    function addToPlaylist(playlistId, index) {
+    function addTracksToPlaylist(playlistId, genreData) {
         // prepares track ids
+        var tracks = genreData.tracks
         var trackList = [];
 
-        for (var i = 0; i < recommendedSongs[index].tracks.length; i++) {
-            trackList.push('spotify:track:' + recommendedSongs[index].tracks[i].id);
+        for (var i = 0; i < tracks.length; i++) {
+            trackList.push('spotify:track:' + tracks[i].id);
         }
-
-        console.log(trackList);
 
         $.ajax({
             url: 'https://api.spotify.com/v1/playlists/' + playlistId + '/tracks',
@@ -183,89 +124,61 @@
             }),
             success: function() {
                 console.log("Added songs to playlist")
-                $('#' + recommendedSongs[index].dashedGenre + '-added').show();
+                $('#' + genreData.dashedGenre + '-added').show();
             }
         });
     }
 
-    function allowToAddPlaylist() {
-        addButtons = document.getElementsByClassName('addPlaylist');
-        
-        var userId;
+    var currentPlaylists, userId
 
-        var userProfReq = $.ajax({
-            url: 'https://api.spotify.com/v1/me',
-            headers: {
-                'Authorization': 'Bearer ' + access_token
-            },
-            success: function(response) {
-                userId = response.id;
-            }
-        });   
+    function allowToAddPlaylist(genreData) {
+        var genre = genreData.dashedGenre
+        var addBtn = document.getElementById(genre + 'AddPlaylistBtn');
 
-        var currentPlaylists;
-
-        currentPlaylistsReq = $.ajax({
-            url: 'https://api.spotify.com/v1/me/playlists',
-            headers: {
-                'Authorization': 'Bearer ' + access_token
-            },
-            success: function(response) {
-                currentPlaylists = response.items;
-            }
-        });
-
-        $.when(userProfReq, currentPlaylistsReq).done(function () {
-            for (var i = 0; i < addButtons.length; i++) {
-                (function (i) {
-                    addButtons[i].outerHTML = addButtons[i].outerHTML; // removes all event listeners
-                    addButtons[i].addEventListener('click', function() {
-                        // Finds a playlist name that isn't taken
-                        var j = 1;
-                        var playlistName = recommendedSongs[i].capitalGenre + ' ' + j.toString();
-                        var playlistNameTaken = true
-                        while (playlistNameTaken) {
-                            playlistNameTaken = false;
-                            for (var k = 0; k < currentPlaylists.length; k++) {
-                                if (currentPlaylists[k].name == playlistName) {
-                                    playlistNameTaken = true;
-                                    j++;
-                                    playlistName = recommendedSongs[i].capitalGenre + ' ' + j.toString();
-                                    k = currentPlaylists.length;
-                                };
-                            };
-                        };
-
-                        // creates empty playlist
-                        $.ajax({
-                            url: 'https://api.spotify.com/v1/users/' + userId + '/playlists',
-                            type: 'POST',
-                            headers: {
-                                'Authorization': 'Bearer ' + access_token
-                            },
-                            dataType: "json",
-                            contentType: "application/json",
-                            data: JSON.stringify({
-                                "name": playlistName,
-                                "description": recommendedSongs[i].capitalGenre + " playlist generated by https://spotifydataapp.herokuapp.com"
-                            }),
-                            success: function(response) {
-                                currentPlaylists.push({
-                                    name: response.name
-                                });
-
-                                addToPlaylist(response.id, i);
-                            }
-                        });
-                    });
-                })(i);
+        addBtn.addEventListener('click', function() {
+            // Finds a playlist name that isn't taken
+            var j = 1;
+            var playlistName = genreData.capitalGenre + ' ' + j.toString();
+            var playlistNameTaken = true
+            while (playlistNameTaken) {
+                playlistNameTaken = false;
+                for (var k = 0; k < currentPlaylists.length; k++) {
+                    if (currentPlaylists[k].name == playlistName) {
+                        playlistNameTaken = true;
+                        j++;
+                        playlistName = genreData.capitalGenre + ' ' + j.toString();
+                        k = currentPlaylists.length;
+                    };
+                };
             };
+
+            // creates empty playlist
+            $.ajax({
+                url: 'https://api.spotify.com/v1/users/' + userId + '/playlists',
+                type: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + access_token
+                },
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "name": playlistName,
+                    "description": genreData.capitalGenre + " playlist generated by https://spotifydataapp.herokuapp.com"
+                }),
+                success: function(response) {
+                    currentPlaylists.push({
+                        name: response.name
+                    });
+
+                    addTracksToPlaylist(response.id, genreData);
+                }
+            });
         });
     };
 
-    function showPlaylist() {
-        $('#' + recommendedSongs[0].dashedGenre).show();
-        $('#playlistsDropdown').value = recommendedSongs[0].dashedGenre;
+    function showPlaylist(genres) {
+        $('#' + Object.keys(genres)[0]).show();
+        $('#playlistsDropdown').value = Object.keys(genres)[0];
 
         $('#playlistsDropdown').on('change', function () {
             $('.playlist').hide();
@@ -273,7 +186,19 @@
         });
     }
 
-    function makeAnotherRecommendReq(genre, capitalGenre, dashedGenre, artistIDs, deviceID) {
+    function displayPlaylist(genre, genreData) {
+        var playlistSource = document.getElementById('playlist-template').innerHTML,
+            playlistTemplate = Handlebars.compile(playlistSource)
+            playlistPlaceholder = document.getElementById(genre + 'Playlist');
+
+        playlistPlaceholder.innerHTML = playlistTemplate(genreData);
+        allowToPlayTracks(genre + 'PlayBtn', 'track');
+        allowToAddPlaylist(genreData);
+    }
+
+
+    /*
+    function makeAnotherRecommendReq(genre, capitalGenre, dashedGenre, artistIDs) {
         $.ajax({
             url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + dashedGenre + '&seed_artists=' + artistIDs + '&limit=30',
             headers: {
@@ -291,88 +216,84 @@
                 });
                 playlistsPlaceholder.innerHTML = playlistsTemplate(recommendedSongs);
                 showPlaylist();
-                allowToPlayTracks('trackPlayBtn', deviceID);
+                allowToPlayTracks('trackPlayBtn', 'track');
                 allowToAddPlaylist();
-
             },
-            error: function() {
-                this.retryCount++;
-                if (this.retryCount <= this.retryLimit) {
-                    console.log("try " + this.retryCount.toString() + " unsuccessful, trying again")
-                    makeAnotherRecommendReq(genre, dashedGenre, artistIDs)
-                }
-                else {
-                    console.log("Request failed 3 times, giving up")
-                }
-            }
+            error: console.log("Try 2 unsuccessful, giving up")
         });
     }
+    */
 
-    function organizePlaylistData(artistData, deviceID) {
+    function organizePlaylistData(artistData) {
         var genres = {};
 
         // makes each genre a key and makes the value a list of artists associated with the genre
         for (var i = 0; i < artistData.items.length; i++) {
             for (var j = 0; j < artistData.items[i].genres.length; j++) {
                 var genre = artistData.items[i].genres[j];
-                if (genres.hasOwnProperty(genre)) {
-                    if (genres[genre].length < 4) {
-                        genres[genre].push(artistData.items[i].id);
-                    };
-                }
-                else {
-                    genres[genre] = [artistData.items[i].id];
-                };
-            }
-        };
-
-        var genresList = Object.keys(genres);
-        var recommendReq;
-        recommendedSongs = [];
-
-        for (var i = 0; i < genresList.length; i++) {
-            (function(i) {
-                var genre = genresList[i];
-
-                // capitalizes first letters
-                var genreWords = genre.split(' ');
-                for (var j = 0; j < genreWords.length; j++) {
-                    genreWords[j] = capitalizeFirstLetter(genreWords[j])
-                }
-                var capitalGenre = genreWords.join(' ');
 
                 // replaces spaces with dashes
                 var dashedGenre = genre.split(' ').join('-');
 
-                var artistIDs = genres[genre].join();
+                if (genres.hasOwnProperty(dashedGenre)) {
+                    genres[dashedGenre].count++;
+
+                    if (genres[dashedGenre].count < 5) {
+                        genres[dashedGenre].artistIds.push(artistData.items[i].id);
+                    };
+                }
+                else {
+                    // capitalizes first letters
+                    var genreWords = genre.split(' ');
+                    for (var k = 0; k < genreWords.length; k++) {
+                        genreWords[k] = capitalizeFirstLetter(genreWords[k])
+                    }
+                    var capitalGenre = genreWords.join(' ');
+
+                    genres[dashedGenre] = {
+                        artistIds: [artistData.items[i].id],
+                        capitalGenre: capitalGenre,
+                        count: 1,
+                        dashedGenre: dashedGenre
+                    };
+                };
+            };
+        };
+
+        playlistsPlaceholder.innerHTML = playlistsTemplate(genres);
+        showPlaylist(genres);
+
+        var genPlaylistBtns = document.getElementsByClassName('genPlaylistBtn');
+
+        for (var i = 0; i < genPlaylistBtns.length; i++) {
+            genPlaylistBtns[i].addEventListener('click', function() {
+                var genre = this.getAttribute('data-genre');
+                var artistIds = genres[genre].artistIds;
+
                 recommendReq = $.ajax({
-                    url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + dashedGenre + '&seed_artists=' + artistIDs + '&limit=30',
+                    url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + genre + '&seed_artists=' + artistIds + '&limit=30',
                     headers: {
                         'Authorization': 'Bearer ' + access_token
                     },
                     success: function(response) {
-                        recommendedSongs.push({
-                            genre: genre,
-                            capitalGenre: capitalGenre,
-                            dashedGenre: dashedGenre,
-                            tracks: response.tracks
-                        });
+                        genres[genre].tracks = response.tracks
+                        displayPlaylist(genre, genres[genre]);
                     },
                     error : function(xhr, textStatus, errorThrown ) {
                         console.log("try 1 unsuccessful, retrying")
-                        makeAnotherRecommendReq(genre, capitalGenre, dashedGenre, artistIDs, deviceID);
+                        makeAnotherRecommendReq(genre, capitalGenre, dashedGenre, artistIDs);
                         return;
                     }
                 });
-            })(i);
-        };
+            })
+        }
 
+        /*
         $.when(recommendReq).done(function () {
-            playlistsPlaceholder.innerHTML = playlistsTemplate(recommendedSongs);
-            showPlaylist();
-            allowToPlayTracks('trackPlayBtn', deviceID);
+            allowToPlayTracks('trackPlayBtn', 'track');
             allowToAddPlaylist();
         });
+        */
     };
 
 
@@ -388,20 +309,20 @@
         playlistsTemplate = Handlebars.compile(playlistsSource),
         playlistsPlaceholder = document.getElementById('playlists');
 
+
     function hideAllSections() {
         $('#topArtists').hide();
         $('#topTracks').hide();
         $('#topPlaylists').hide();
-        $('.nav-item').removeClass('active');
+        $('.section').removeClass('active');
+        $('.navbar-collapse').collapse('hide');
     }
 
-    function displayStats(timeRange, deviceID) {
+    function displayStats(timeRange) {
         $('#login').hide();
         $('#loggedIn').show();
 
-        hideAllSections()    
-        $('#topArtists').show();
-        $('#artistsBtn').addClass('active');
+        hideAllSections();    
 
         document.getElementById("artistsBtn").addEventListener('click', function() {
             hideAllSections();
@@ -424,7 +345,7 @@
         var artistData, trackData;
 
         var artistReq = $.ajax({
-            url: 'https://api.spotify.com/v1/me/top/artists?time_range=' + timeRange + '&limit=20',
+            url: 'https://api.spotify.com/v1/me/top/artists?time_range=' + timeRange + '&limit=50',
             headers: {
                 'Authorization': 'Bearer ' + access_token
             },
@@ -443,37 +364,71 @@
             }   
         });
 
-        $.when(artistReq, trackReq).done(function () {
-            organizeArtistData(artistData, deviceID);
-            organizeTrackData(trackData, deviceID);
-            organizePlaylistData(artistData, deviceID);
+        var userProfReq = $.ajax({
+            url: 'https://api.spotify.com/v1/me',
+            headers: {
+                'Authorization': 'Bearer ' + access_token
+            },
+            success: function(response) {
+                userId = response.id;
+            }
+        });   
+
+        var currentPlaylistsReq = $.ajax({
+            url: 'https://api.spotify.com/v1/me/playlists',
+            headers: {
+                'Authorization': 'Bearer ' + access_token
+            },
+            success: function(response) {
+                currentPlaylists = response.items;
+            }
+        });
+
+        $.when(artistReq, trackReq, currentPlaylistsReq, userProfReq).done(function () {
+            organizeArtistData(artistData);
+            organizeTrackData(trackData);
+            organizePlaylistData(artistData);
         });
     }
 
     // refreshes page with selected time range on button click
-    function readyRefreshBtn(deviceID) {
-        document.getElementById("refreshBtn").addEventListener("click", function()  {
-            artistSectionOn = document.getElementById("artistsBtn").classList.contains("active");
-            trackSectionOn = document.getElementById("tracksBtn").classList.contains("active");
+    function readyRefreshBtn() {
+        var timeRangeBtns = [$('#shortTerm'), $('#mediumTerm'), $('#longTerm')];
 
-            timeRange = document.getElementById("timeRangeDropdown").value;
-            displayStats(timeRange, deviceID);
-            hideAllSections();
+        for (var i = 0; i < timeRangeBtns.length; i++) {
+            (function(i) {
+                timeRangeBtns[i].on('click', function () {
+                    artistSectionOn = document.getElementById("artistsBtn").classList.contains("active");
+                    trackSectionOn = document.getElementById("tracksBtn").classList.contains("active");
+                    playlistSectionOn = document.getElementById("playlistsBtn").classList.contains("active");
 
-            // shows section that was up when button is clicked
-            if (artistSectionOn) {
-                $('#topArtists').show();
-                $('#artistsBtn').addClass('active');
-            }
-            else if (trackSectionOn) {
-                $('#topTracks').show();
-                $('#tracksBtn').addClass('active');
-            }
-            else {
-                $('#topPlaylists').show();
-                $('#playlistsBtn').addClass('active');
-            }
-        });
+                    $('.timeRange').removeClass('active');
+
+                    timeRangeBtns[i].addClass('active');
+
+                    timeRange = this.getAttribute('data-time');
+                    hideAllSections();
+                    displayStats(timeRange);
+
+                    // shows section that was up when button is clicked
+                    if (artistSectionOn) {
+                        $('#topArtists').show();
+                        $('#artistsBtn').addClass('active');
+                    }
+                    else if (trackSectionOn) {
+                        $('#topTracks').show();
+                        $('#tracksBtn').addClass('active');
+                    }
+                    else if (playlistSectionOn) {
+                        $('#topPlaylists').show();
+                        $('#playlistsBtn').addClass('active');
+                    }
+                });
+            })(i);
+        };
+
+        $('#topArtists').show();
+        $('#artistsBtn').addClass('active');
     };
 
     /**
@@ -517,7 +472,7 @@
                     // Error handling
                     player.addListener('initialization_error', ({ message }) => { 
                         console.error(message);
-                        $('#mobileDevice').show()
+                        $('#mobileDevice').show();
                         displayStats("long_term", null);
                         readyRefreshBtn(null);
                     });
@@ -531,9 +486,10 @@
                 
                     // Ready
                     player.addListener('ready', ({ device_id }) => {
-                        console.log('Ready with Device ID', device_id);
-                        displayStats("long_term", device_id);
-                        readyRefreshBtn(device_id);
+                        deviceId = device_id
+                        console.log('Ready with Device ID', deviceId);
+                        displayStats("long_term");
+                        readyRefreshBtn();
                     });
                     
                     // Not Ready
