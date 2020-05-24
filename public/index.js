@@ -240,6 +240,7 @@
 
                     if (genres[dashedGenre].count < 5) {
                         genres[dashedGenre].artistIds.push(artistData.items[i].id);
+                        genres[dashedGenre].artistNames.push(artistData.items[i].name);
                     };
                 }
                 else {
@@ -252,6 +253,7 @@
 
                     genres[dashedGenre] = {
                         artistIds: [artistData.items[i].id],
+                        artistNames: [artistData.items[i].name],
                         capitalGenre: capitalGenre,
                         count: 1,
                         dashedGenre: dashedGenre

@@ -132,6 +132,7 @@
         {{#each this}}
           <span id="{{@key}}" class="playlist">
             <button id="{{@key}}GenPlaylistBtn" class="genPlaylistBtn" data-genre={{@key}}>Generate Playlist</button>
+            <p>Based on your interest in {{#each artistNames}}{{#if @first}}{{this}}{{else}}, {{this}}{{/if}}{{/each}}</p>
             <div id="{{@key}}Playlist"></div>
           </span>
         {{/each}}
