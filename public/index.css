@@ -54,7 +54,7 @@
 
 
 .row img {
-    width: 100%;
+    width: 75%;
 }
 
 #tracksContainer .row, .row, .addPlaylist {
@@ -90,7 +90,7 @@ p select {
 }
 
 .artistPlayBtn {
-    width: 100%;
+    width: 75%;
 }
 
 .row div {
@@ -99,4 +99,18 @@ p select {
 
 .timeRange {
     text-align: right;
+}
+
+body {
+    background-image: url('pics/manWithGuitarBackround.jpg');
+    min-height: 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    color: white;
+}
+
+nav {
+    background-color: lightgray;
 }

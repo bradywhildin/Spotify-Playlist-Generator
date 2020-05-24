@@ -20,7 +20,7 @@
     </div>
 
     <div id="loggedIn">
-      <nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
+      <nav class="navbar sticky-top navbar-expand-sm navbar-light">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -74,10 +74,10 @@
               <div class="row">
             {{/if}}
 
-            <div class="col-lg-3 col-sm-6 col-12">
+            <div class="text-center col-lg-3 col-sm-6 col-12">
               <h4>{{inc @index}}. {{name}}</h4>
               <img src="{{image}}">
-              <button class="artistPlayBtn btn btn-outline-secondary" data-trackId="{{id}}">Play</button>
+              <button class="artistPlayBtn btn btn-outline-light" data-trackId="{{id}}">Play</button>
             </div>
           {{/each}}
         </div>
@@ -96,7 +96,7 @@
             </div>
             <div class="col-sm-9 col-6">
               <p>{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
-              <p><button class="trackPlayBtn btn btn-outline-secondary" data-trackId="{{id}}" data-playing="False">Play</button></p>
+              <p><button class="trackPlayBtn btn btn-outline-light" data-trackId="{{id}}" data-playing="False">Play</button></p>
             </div>
           </div>
         {{/each}}
@@ -104,7 +104,7 @@
     </script>
 
     <script id="playlist-template" type="text/x-handlebars-template">
-      <button class="addPlaylist btn btn-outline-success" id="{{dashedGenre}}AddPlaylistBtn">Add playlist to account</button>
+      <button class="addPlaylist btn btn-outline-light" id="{{dashedGenre}}AddPlaylistBtn">Add playlist to account</button>
       <p id="{{dashedGenre}}-added" class="playlistAdded">Playlist added!</p>
       {{#each tracks}}
         <div class="row">
@@ -116,7 +116,7 @@
           </div>
           <div class="col-sm-9 col-6">
             <p>{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
-            <p><button class="{{@root.dashedGenre}}PlayBtn btn btn-outline-secondary" data-trackId="{{id}}" data-playing="False">Play</button></p>
+            <p><button class="{{@root.dashedGenre}}PlayBtn btn btn-outline-light" data-trackId="{{id}}" data-playing="False">Play</button></p>
           </div>
         </div>
       {{/each}}
@@ -131,7 +131,7 @@
         </select>
         {{#each this}}
           <span id="{{@key}}" class="playlist">
-            <button id="{{@key}}GenPlaylistBtn" class="genPlaylistBtn btn btn-outline-primary" data-genre={{@key}}>Generate Playlist</button>
+            <button id="{{@key}}GenPlaylistBtn" class="genPlaylistBtn btn btn-outline-light" data-genre={{@key}}>Generate Playlist</button>
             <p>Based on your interest in {{#each artistNames}}{{#if @first}}{{this}}{{else}}, {{this}}{{/if}}{{/each}}</p>
             <div id="{{@key}}Playlist"></div>
           </span>
