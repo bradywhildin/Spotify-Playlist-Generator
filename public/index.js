@@ -55,7 +55,11 @@
                     dataType: "json",
                     contentType: "application/json",
                     data: data,
-                    success: console.log("Playing " + type + " " + this.getAttribute("data-trackId"))
+                    success: console.log("Playing " + type + " " + this.getAttribute("data-trackId")),
+                    error: function(xhr, ajaxOptions, thrownError){
+                        if (xhr.status == 403) alert('You must have Spotify Premium to play songs.');
+                        else if (xhr.status == 404) alert('You must have Spotify actively playing on a device.');
+                    }
                 });
 
                 return false;
@@ -373,8 +377,12 @@
             },
             success: function(response) {
                 userId = response.id;
+                
+                if (response.product != 'premium') {
+                    $('#noPremium').show();
+                }
             }
-        });   
+        });
 
         var currentPlaylistsReq = $.ajax({
             url: 'https://api.spotify.com/v1/me/playlists',
@@ -503,6 +511,8 @@
                     player.connect();
                 };
             }
+
+
         } else {
             // render initial screen
             $('#login').show();
