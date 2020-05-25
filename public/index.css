@@ -176,3 +176,7 @@ select:hover, select:focus {
 .genPlaylistBtn {
     margin: 10px 0;
 }
+
+#logoutBtn {
+    float: right;
+}

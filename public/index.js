@@ -16,6 +16,10 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+    $('#logoutBtn').on('click', function() {
+        window.location.href = 'https://accounts.spotify.com/logout';
+    })
+
     var deviceId;
 
     function allowToPlayTracks(playButtonsClass, type) {
