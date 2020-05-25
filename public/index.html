@@ -88,15 +88,15 @@
       <div class="container-fluid" id="tracksContainer">
         {{#each}}
           <div class="row">
-            <div class="col-1 text-left" id="trackNum">
+            <div class="col-1 text-center" id="trackNum">
               {{inc @index}}.
             </div>
-            <div class="col-sm-2 col-4">
+            <div class="col-sm-1 col-2">
               <img src="{{image}}">
             </div>
-            <div class="col-sm-9 col-6">
-              <p>{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
-              <p><button class="trackPlayBtn btn btn-outline-light" data-trackId="{{id}}" data-playing="False">Play</button></p>
+            <div class="col-sm-9 col-9">
+              <p class="trackName">{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
+              <p class="trackPlay"><button class="trackPlayBtn btn btn-outline-light" data-trackId="{{id}}" data-playing="False">Play</button></p>
             </div>
           </div>
         {{/each}}
@@ -108,15 +108,15 @@
       <p id="{{dashedGenre}}-added" class="playlistAdded">Playlist added!</p>
       {{#each tracks}}
         <div class="row">
-          <div class="col-1 text-left" id="trackNum">
+          <div class="col-1 text-center" id="trackNum">
             {{inc @index}}.
           </div>
-          <div class="col-sm-2 col-4">
+          <div class="col-sm-1 col-2">
             <img src="{{album.images.0.url}}">
           </div>
-          <div class="col-sm-9 col-6">
-            <p>{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
-            <p><button class="{{@root.dashedGenre}}PlayBtn btn btn-outline-light" data-trackId="{{id}}" data-playing="False">Play</button></p>
+          <div class="col-sm-9 col-9">
+            <p class="trackName">{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
+            <p class="trackPlay"><button class="{{@root.dashedGenre}}PlayBtn btn btn-outline-light" data-trackId="{{id}}" data-playing="False">Play</button></p>
           </div>
         </div>
       {{/each}}
@@ -124,6 +124,7 @@
 
     <script id="playlists-template" type="text/x-handlebars-template">
       <div class="container-fluid">
+        <p>This section uses genre data from your top artists to create playlists. Click on the genre to change to a different genre. Pressing the "Add playlist to account" button will add the playlist below it to your spotify account.</p>
         <select id="playlistsDropdown">
           {{#each this}}
             <option value="{{@key}}">{{capitalGenre}}</option>

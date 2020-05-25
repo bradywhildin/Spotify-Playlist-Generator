@@ -1,22 +1,18 @@
 @media (max-width: 576px) {
     p {
-        font-size: 5vw;
+        font-size: 2vw;
     }
 
     #tracks p, #playlists p {
-        font-size: 4vw;
+        font-size: 2.5vw;
     }
 
-    button {
-        font-size: 8vw !important;
+    #artists button {
+        font-size: 5vw;
     }
-
+    
     select {
         font-size: 6vw;
-    }
-
-    #tracks p {
-        text-align: center;
     }
 
     .navbar {
@@ -75,7 +71,7 @@ body {
 
 @media (min-width: 992px) {
     p {
-        font-size: 1.5vw;
+        font-size: 1.2vw;
     }
 
     select {
@@ -83,7 +79,7 @@ body {
     }
 
     button {
-        font-size: 2vw !important;
+        font-size: 1.5vw !important;
     }
 }
 
@@ -92,8 +88,8 @@ body {
     width: 75%;
 }
 
-#tracksContainer .row, .row, .addPlaylist {
-    margin: 20px 0;
+#tracks, #playlists img {
+    width: 100%;
 }
 
 p select {
@@ -105,7 +101,7 @@ p select {
 }
 
 #trackNum {
-    font-size: 4vw;
+    font-size: 2.5vw;
 }
 
 #mobileDevice {
@@ -126,10 +122,7 @@ p select {
 
 .artistPlayBtn {
     width: 75%;
-}
-
-.row div {
-    margin: 20px 0;
+    margin-bottom: 17px;
 }
 
 .timeRange {
@@ -139,4 +132,43 @@ p select {
 
 nav {
     background-color: lightgray;
+}
+
+select {
+    height: 50px;
+    font-size: 100%;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0;
+    background-color: gray;
+    border: none;
+    color: white;
+    padding: 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+select:hover, select:focus {
+  color: black;
+  background-color: lightgray;
+  border-bottom-color: #DCDCDC;
+}
+
+.addPlaylist {
+    margin-bottom: 30px;
+}
+
+.trackName {
+    margin-top: 0px;
+    margin-bottom: 2px;
+}
+
+.trackPlay {
+    margin-top: 0px;
+    margin-bottom: 15px;
+}
+
+#playlists img {
+    margin-bottom: 15px;
 }
