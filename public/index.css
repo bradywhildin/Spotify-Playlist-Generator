@@ -172,3 +172,7 @@ select:hover, select:focus {
 #playlists img {
     margin-bottom: 15px;
 }
+
+.genPlaylistBtn {
+    margin: 10px 0;
+}
