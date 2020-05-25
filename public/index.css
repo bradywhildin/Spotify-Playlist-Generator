@@ -34,7 +34,9 @@
         width: 100%;
         height: 100%;
         z-index: -10;
-        background: url('pics/manWithGuitarBackround.jpg') no-repeat center center;
+        background-image: url('pics/flippedGuitar.jpg');
+        background-repeat: no-repeat;
+        background-position: center;
         -webkit-background-size: cover;
         -moz-background-size: cover;
         -o-background-size: cover;
@@ -44,14 +46,17 @@
 
 @media (min-width: 1113px) {
     body {
-        background-image: url('pics/manWithGuitarBackround.jpg');
+        background-image: url('pics/flippedGuitar.jpg');
         background-repeat: no-repeat;
         background-size: cover;
         width: 100%;
         height: 100%;
         background-attachment: fixed;
     }
-    
+}
+
+body {
+    color: white;
 }
 
 @media (min-width: 577px) and (max-width: 991px) {
@@ -82,9 +87,6 @@
     }
 }
 
-body {
-    color: white;
-}
 
 .row img {
     width: 75%;
