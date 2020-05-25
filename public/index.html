@@ -91,10 +91,10 @@
             <div class="col-1 text-center" id="trackNum">
               {{inc @index}}.
             </div>
-            <div class="col-sm-1 col-2">
+            <div class="col-lg-1 col-2">
               <img src="{{image}}">
             </div>
-            <div class="col-sm-9 col-9">
+            <div class="col-lg-9 col-9">
               <p class="trackName">{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
               <p class="trackPlay"><button class="trackPlayBtn btn btn-outline-light" data-trackId="{{id}}" data-playing="False">Play</button></p>
             </div>
