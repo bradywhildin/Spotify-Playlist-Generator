@@ -39,6 +39,10 @@ body {
         font-size: 2vw;
     }
 
+    #login p {
+        font-size: 4vw;
+    }
+
     #tracks p, #playlists p {
         font-size: 2.9vw;
     }
@@ -180,4 +184,8 @@ select:hover, select:focus {
 
 #logoutBtn {
     float: right;
+}
+
+#myName {
+    margin-top: 200px;
 }
