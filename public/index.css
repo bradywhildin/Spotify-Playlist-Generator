@@ -1,25 +1,3 @@
-@media (max-width: 576px) {
-    p {
-        font-size: 2vw;
-    }
-
-    #tracks p, #playlists p {
-        font-size: 2.9vw;
-    }
-
-    #artists button {
-        font-size: 5vw;
-    }
-    
-    select {
-        font-size: 6vw;
-    }
-
-    .navbar {
-        font-size: 5vw;
-    }
-}
-
 @media (max-width: 1112px) {
     body:before {
         content: "";
@@ -53,6 +31,29 @@
 
 body {
     color: white;
+    font-family: 'Open Sans';
+}
+
+@media (max-width: 576px) {
+    p {
+        font-size: 2vw;
+    }
+
+    #tracks p, #playlists p {
+        font-size: 2.9vw;
+    }
+
+    #artists button {
+        font-size: 5vw;
+    }
+    
+    select {
+        font-size: 6vw;
+    }
+
+    .navbar {
+        font-size: 5vw;
+    }
 }
 
 @media (min-width: 577px) and (max-width: 991px) {

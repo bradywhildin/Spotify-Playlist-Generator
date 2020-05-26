@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Spotify Web App</title>
+    <title>Spotify Playlist Generator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -9,13 +9,15 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script> 
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
     <link rel="stylesheet" type="text/css" href="index.css">
     <link rel="icon" type="image/png" href="/favicon-32x32.png"><link rel="shortcut icon" href="">
   </head>
   <body>
-    <h1 class="text-center">Spotify Web App</h1>
+    <h1 class="text-center">Spotify Playlist Generator</h1>
 
     <div id="login">
+      <p>Please login with your account to see your artist and song data, as well as be able to generate playlists tailored for you.</p>
       <a href="/login" class="btn btn-primary">Log in with Spotify</a>
     </div>
 
@@ -98,7 +100,7 @@
             </div>
             <div class="col-lg-9 col-9">
               <p class="trackName">{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
-              <p class="trackPlay"><button class="trackPlayBtn btn btn-outline-light" data-trackId="{{id}}" data-playing="False">Play</button></p>
+              <p class="trackPlay"><button class="trackPlayBtn btn btn-outline-light" data-trackId="{{id}}">Play</button></p>
             </div>
           </div>
         {{/each}}
@@ -118,7 +120,7 @@
           </div>
           <div class="col-lg-9 col-9">
             <p class="trackName">{{name}} - {{#each artists}}{{#if @first}}{{name}}{{else}}, {{name}}{{/if}}{{/each}}</p> <!-- Prepends comma to name for every artist after first -->
-            <p class="trackPlay"><button class="{{@root.dashedGenre}}PlayBtn btn btn-outline-light" data-trackId="{{id}}" data-playing="False">Play</button></p>
+            <p class="trackPlay"><button class="{{@root.dashedGenre}}PlayBtn btn btn-outline-light" data-trackId="{{id}}">Play</button></p>
           </div>
         </div>
       {{/each}}
