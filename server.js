@@ -5,10 +5,9 @@ var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 //require('dotenv').config();
 
-console.log(process.env.CLIENT_ID)
 var client_id = process.env.CLIENT_ID; // Your client id
 var client_secret = process.env.CLIENT_SECRET; // Your secret
-var redirect_uri = 'https://spotifydataapp.herokuapp.com/callback'; // Your redirect uri
+var redirect_uri = 'https://playlistgeneratorapp.herokuapp.com/callback'; // Your redirect uri
 //var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 //var redirect_uri = 'http://192.168.1.102:8888/callback'; // Your redirect uri
 
