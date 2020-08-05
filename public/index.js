@@ -76,10 +76,15 @@
     function organizeArtistData(response) {
         var artists = [];
         for (var i = 0; i < response.items.length; i++) {
+            const artistData = response.items[i]
+            var imageUrl = '';
+            if (artistData.images.length > 0) { // only use artist image if there is one
+                imageUrl = artistData.images[0].url;
+            };
             artists.push({
-                id: response.items[i].id,
-                image: response.items[i].images[0].url,
-                name: response.items[i].name
+                id: artistData.id,
+                image: imageUrl,
+                name: artistData.name
             });
         };
 
@@ -98,11 +103,16 @@
         // organizes track data
         for (var i = 0; i < response.items.length; i++) {
             (function(i) {
+                const trackData = response.items[i]
+                var imageUrl = ''
+                if (trackData.album.images.length > 0) { // only use image if there is one
+                    imageUrl = trackData.album.images[0].url
+                }
                 const track = {
-                    artists: response.items[i].artists,
-                    id: response.items[i].id,
-                    image: response.items[i].album.images[0].url,
-                    name: response.items[i].name
+                    artists: trackData.artists,
+                    id: trackData.id,
+                    image: imageUrl,
+                    name: trackData.name
                 };
                 tracks[i] = track;
             })(i);
